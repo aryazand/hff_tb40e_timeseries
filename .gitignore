@@ -1,4 +1,9 @@
-/data/
+/data/**
+!/data/fastq
+!/data/fastq/SRR16301857_sample_1.fq
+!/data/fastq/SRR16301857_sample_2.fq
+!/data/genome
+!/data/genome/genome_download.sh
 /log/
 /results/
 /processed_data/
