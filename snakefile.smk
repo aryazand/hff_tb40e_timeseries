@@ -1,12 +1,11 @@
 fastq_files, = glob_wildcards("data/fastq/{fname}_1.fq")
-genome_index = glob_wildcards("data/genome/{genome_name}.fa")
 
 rule all:
     input:
         expand("results/fastqc/{sample}_1_fastqc.html", sample = fastq_files),
         expand("results/fastqc/{sample}_2_fastqc.html", sample = fastq_files),
-        expand("results/fastqc/{sample}_1_val_1_dedupped_fastqc.html", sample = fastq_files),
-        expand("results/fastqc/{sample}_2_val_2_dedupped_fastqc.html", sample = fastq_files),
+        expand("results/fastqc/{sample}_1_val_1_dedupped.fq.paired_fastqc.html", sample = fastq_files),
+        expand("results/fastqc/{sample}_2_val_2_dedupped.fq.paired_fastqc.html", sample = fastq_files),
         expand("results/aligned_reads/{sample}.sam", sample = fastq_files),
 
 rule fastqc:
@@ -48,11 +47,28 @@ rule run_dedup:
     shell:
 	    "seqkit rmdup -s -o {output} {input} 2> {log.err} 1> {log.out}"
 
+rule run_pair:
+    input:
+        f1 = "processed_data/trimmed_dedup_fastq/{sample}_1_val_1_dedupped.fq",
+        f2 = "processed_data/trimmed_dedup_fastq/{sample}_2_val_2_dedupped.fq"
+    output:
+        f1 = "processed_data/trimmed_dedup_fastq_paired/{sample}_1_val_1_dedupped.fq.paired.fq",
+        f2 = "processed_data/trimmed_dedup_fastq_paired/{sample}_2_val_2_dedupped.fq.paired.fq"
+    log:
+        out = "log/run_pair.{sample}.out",
+        err = "log/run_pair.{sample}.err"
+    shell:
+        """
+        fastq_pair {input} 2> {log.err} 1> {log.out}
+        mv processed_data/trimmed_dedup_fastq/{wildcards.sample}_1_val_1_dedupped.fq.paired.fq {output.f1}
+        mv processed_data/trimmed_dedup_fastq/{wildcards.sample}_2_val_2_dedupped.fq.paired.fq {output.f2}
+        """
+
 rule run_fastqc_on_processed_reads:
     input: 
-        "processed_data/trimmed_dedup_fastq/{sample}_{direction}_val_{direction}_dedupped.fq"
+        "processed_data/trimmed_dedup_fastq_paired/{sample}_{direction}_val_{direction}_dedupped.fq.paired.fq"
     output: 
-        "results/fastqc/{sample}_{direction}_val_{direction}_dedupped_fastqc.html"
+        "results/fastqc/{sample}_{direction}_val_{direction}_dedupped.fq.paired_fastqc.html"
     log:
         out = "log/fastqc_{sample}_{direction}_val_{direction}_dedupped.out",
         err = "log/fastqc_{sample}_{direction}_val_{direction}_dedupped.err"
@@ -65,15 +81,15 @@ rule run_fastqc_on_processed_reads:
 
 rule align_reads:
     input:
-        f1 = "processed_data/trimmed_dedup_fastq/{sample}_1_val_1_dedupped.fq",
-        f2 = "processed_data/trimmed_dedup_fastq/{sample}_2_val_2_dedupped.fq"
+        f1 = "processed_data/trimmed_dedup_fastq_paired/{sample}_1_val_1_dedupped.fq.paired.fq",
+        f2 = "processed_data/trimmed_dedup_fastq_paired/{sample}_2_val_2_dedupped.fq.paired.fq"
     output:
         "results/aligned_reads/{sample}.sam"
     log:
         out = "log/align_reads_{sample}.out",
         err = "log/align_reads_{sample}.err"
     params:
-        BOWTIE_INDEX = genome_index,
+        BOWTIE_INDEX = "data/genome/human_tb40E_spodoptera_combined_genome",
         UMI_SIZE = 8
     shell:
         "bowtie -x {params.BOWTIE_INDEX} --threads 4 --trim5 {params.UMI_SIZE} --trim3 {params.UMI_SIZE} --chunkmbs 500 --fr --best --sam --allow-contain --fullref -1 {input.f1} -2 {input.f2} {output} 2> {log.err} 1> {log.out}"
