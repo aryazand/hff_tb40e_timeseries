@@ -8,6 +8,6 @@ unzip towne_dataset.zip -d towne_dataset
 unzip spodoptera_dataset.zip -d spodoptera_dataset
 unzip tb40E_dataset.zip -d tb40E_dataset
 
-cat human_GRCh38_dataset/ncbi_dataset/data/*/*.fna towne_dataset/ncbi_dataset/data/*/*.fna spodoptera_dataset/ncbi_dataset/data/*/*.fna > human_towne_spodoptera_combined_genome.fa
+cat human_GRCh38_dataset/ncbi_dataset/data/*/*.fna towne_dataset/ncbi_dataset/data/*/*.fna spodoptera_dataset/ncbi_dataset/data/*/*.fna | sed '/^>/ s/[[:space:]]/\_/g' > human_towne_spodoptera_combined_genome.fa
 
-cat human_GRCh38_dataset/ncbi_dataset/data/*/*.fna tb40E_dataset/ncbi_dataset/data/*/*.fna spodoptera_dataset/ncbi_dataset/data/*/*.fna > human_tb40E_spodoptera_combined_genome.fa
+cat human_GRCh38_dataset/ncbi_dataset/data/*/*.fna tb40E_dataset/ncbi_dataset/data/*/*.fna spodoptera_dataset/ncbi_dataset/data/*/*.fna | sed '/^>/ s/[[:space:]]/\_/g' > human_tb40E_spodoptera_combined_genome.fa
