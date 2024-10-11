@@ -2,10 +2,9 @@ fastq_files, = glob_wildcards("data/fastq/{fname}_1.fastq.gz")
 
 rule all:
     input:
-        expand("results/fastqc/{sample}_1_fastqc.html", sample = fastq_files),
-        expand("results/fastqc/{sample}_2_fastqc.html", sample = fastq_files),
-        expand("results/fastqc/{sample}_1_val_1_dedupped.fq.paired_fastqc.html", sample = fastq_files),
-        expand("results/fastqc/{sample}_2_val_2_dedupped.fq.paired_fastqc.html", sample = fastq_files),
+        expand("results/fastqc/{sample}_{direction}_fastqc.html", sample = fastq_files, direction = ["1", "2"]),
+        expand("results/fastqc/{sample}_{direction}_val_{direction}_dedupped.fq.paired_fastqc.html", sample = fastq_files, direction = ["1", "2"]),
+        expand("processed_data/trimmed_dedup_fastq_paired/{sample}_{direction}_val_{direction}_dedupped.fq.paired.fq", sample = fastq_files, direction = ["1", "2"]),
         expand("results/aligned_reads/{sample}_cmv.bed", sample = fastq_files),
         expand("results/aligned_reads/{sample}_{genome}_{direction}.bg", sample = fastq_files, genome = "cmv", direction = ["for", "rev"]),
         expand("results/aligned_reads/{sample}_{genome}.bam", sample = fastq_files, genome = ["cmv", "allgenomes", "spikein"]),
@@ -49,7 +48,10 @@ rule run_dedup:
         out = "log/run_dedup.{sample}_{direction}.out",
         err = "log/run_dedup.{sample}_{direction}.err"
     shell:
-	    "seqkit rmdup -s -o {output} {input} 2> {log.err} 1> {log.out}"
+	    """
+        seqkit rmdup -s -o {output} {input} 2> {log.err} 1> {log.out}
+        rm {input}
+        """
 
 rule run_pair:
     input:
@@ -66,6 +68,7 @@ rule run_pair:
         fastq_pair {input} 2> {log.err} 1> {log.out}
         mv processed_data/trimmed_dedup_fastq/{wildcards.sample}_1_val_1_dedupped.fq.paired.fq {output.f1}
         mv processed_data/trimmed_dedup_fastq/{wildcards.sample}_2_val_2_dedupped.fq.paired.fq {output.f2}
+        rm {input.f1} {input.f2} 
         """
 
 rule run_fastqc_on_processed_reads:
