@@ -1,0 +1,39 @@
+##############################
+###  Sample configuration  ###
+##############################
+
+
+###############################
+### Analysis config options ###
+###############################
+
+genomes:
+  human:
+    accession: "GCF_000001405.40"
+    genome_name: "human_GRCh38"
+    pattern_match: "Homo_sapiens"
+  cmv:
+    accession: "GCA_027926625.1"
+    genome_name: "cmv_tb40E"
+    chr_name_change: "KF297339.1"
+    pattern_match: "KF297339.1"
+  spikein:
+    accession: "GCF_023101765.2"
+    genome_name: "spodoptera"
+    pattern_match: "Spodoptera"
+
+fastq_sample: 100000
+
+genomes_to_extact: 
+  - cmv 
+  - human
+
+bowtie2:
+  index: "data/genome/human_tb40E_spodoptera_combined_genome" # reference genome
+  umi_size: 8 # size of umi to trim from reads prior to align
+  paired_options: "--fr --no-discordant" # options for paired end alignment
+  additional_params: ""  # additional bowtie2 parameters 
+
+create_bedgraph:
+  binsize: 1 # size of bedgraph bins
+  track_definition_line: "track type=bedGraph" 
