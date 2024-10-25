@@ -8,3 +8,8 @@
 /results/
 /processed_data/
 /.snakemake/
+/container.sif
+/scratch
+/.Rhistory
+/.Rproj.user
+*.Rproj
