@@ -4,6 +4,7 @@ with open('SRR_Acc_List.txt') as f:
 accession = [i for i in accession if not '#' in i]
 
 configfile: "config.yml"
+containerized: "container.sif"
 
 rule all:
     input:
