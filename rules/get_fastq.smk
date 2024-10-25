@@ -32,15 +32,16 @@ rule sra_to_fastq:
         """
         fasterq-dump -O data/fastq {input} 
 
-        if [ -z "{params.fastq_sample}" ]
+        re='^[0-9]+([.][0-9]+)?$'
+        if [[ {params.fastq_sample} =~ $re ]]
         then
-            echo "no subsampling of fastq"
-        else
             echo "subsample {params.fastq_sample} reads from fastq"
             seqtk sample -s{params.seed} {output.f1} {params.fastq_sample} > {output.f1}.TMP
             mv {output.f1}.TMP {output.f1}
             seqtk sample -s{params.seed} {output.f2} {params.fastq_sample} > {output.f2}.TMP
             mv {output.f2}.TMP {output.f2}
+        else
+            echo "no subsampling of fastq"
         fi
         """
 
