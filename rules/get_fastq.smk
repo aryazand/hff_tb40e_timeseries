@@ -8,7 +8,7 @@ rule download_sra:
         err = "log/download_sra_{sra}.err"
     shell: 
         """
-        prefetch {wildcards.sra} -O fastq 2> {log.err} 1> {log.out}
+        prefetch {wildcards.sra} -O data/fastq 2> {log.err} 1> {log.out}
         """
 
 rule sra_to_fastq:
