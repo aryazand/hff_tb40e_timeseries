@@ -15,7 +15,8 @@ rule all:
         expand("results/aligned_reads/{sample}_{genome}.bam.bai", sample = accession, genome = ['allgenomes_sorted', 'cmv_extract', 'human_extract']),
         expand("results/aligned_reads/{sample}_{genome}_extract.bam", sample = accession, genome = ['cmv', 'spikein', 'human']),
         expand("results/bed/{sample}_{genome}.bed", sample = accession, genome = ['cmv', "human"]),
-        expand("results/tracks/{sample}_{genome}_{direction}.bg", sample = accession, genome = ['cmv', "human"], direction = ['for', 'rev'])
+        expand("results/tracks/{sample}_{genome}_{direction}.bg", sample = accession, genome = ['cmv', "human"], direction = ['for', 'rev']),
+        "results/multiqc/multiqc_report.html"
 
 include: "rules/get_fastq.smk"
 include: "rules/process_fastq.smk"
