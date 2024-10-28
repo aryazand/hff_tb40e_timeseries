@@ -22,10 +22,10 @@ rule bam_to_bedgraph:
     shell:
       """
       bamCoverage --outFileFormat bedgraph -p {threads} --binSize {params.binsize} -b {input.bam} --filterRNAstrand forward -o {output.for_bg} 2> {log.err_for} 1> {log.out_for}
-      awk -i inplace -e '$1 ~ /{params.genome_pattern_identifier}/ {{print $0}}' {output.for_bg} 2> {log.err_for} 1> {log.out_for}
+      gawk -i inplace -e '$1 ~ /{params.genome_pattern_identifier}/ {{print $0}}' {output.for_bg} 2> {log.err_for} 1> {log.out_for}
       sed -i '1s/^/{params.track_definition_line}\\n/' {output.for_bg} 2> {log.err_for} 1> {log.out_for}
       
       bamCoverage --outFileFormat bedgraph -p {threads} --binSize {params.binsize} -b {input.bam} --filterRNAstrand reverse -o {output.rev_bg} 2> {log.err_rev} 1> {log.out_rev}
-      awk -i inplace -e '$1 ~ /{params.genome_pattern_identifier}/ {{print $0}}' {output.rev_bg} 2> {log.err_rev} 1> {log.out_rev}
+      gawk -i inplace -e '$1 ~ /{params.genome_pattern_identifier}/ {{print $0}}' {output.rev_bg} 2> {log.err_rev} 1> {log.out_rev}
       sed -i '1s/^/{params.track_definition_line}\\n/' {output.rev_bg} 2> {log.err_rev} 1> {log.out_rev}
       """
