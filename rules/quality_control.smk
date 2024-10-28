@@ -1,6 +1,6 @@
 rule fastqc:
     input: 
-        "data/fastq/{sample}.fastq.gz"
+        "data/fastq/{sample}.fastq"
     output: 
         "results/fastqc/{sample}_fastqc.html"
     conda:
@@ -15,7 +15,7 @@ rule fastqc:
 
 rule fastqc_on_processed_fastq:
     input: 
-        "processed_data/fastq/{sample}_{direction}_processed.fastq"
+        "processed_data/fastq/{sample}_{direction}_processed.fastq.gz"
     output: 
         "results/fastqc/{sample}_{direction}_processed_fastqc.html"
     conda:

@@ -44,16 +44,3 @@ rule sra_to_fastq:
             echo "no subsampling of fastq"
         fi
         """
-
-rule gzip_fastq:
-    input:
-        "data/fastq/{sra}_{direction}.fastq"
-    output:
-        "data/fastq/{sra}_{direction}.fastq.gz"
-    conda:
-        "../envs/get-fastq.yml"
-    log:
-        out = "log/dump_fastq_{sra}_{direction}.out",
-        err = "log/dump_fastq_{sra}_{direction}.err"
-    shell:
-        "gzip {input}"

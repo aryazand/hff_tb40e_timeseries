@@ -3,8 +3,8 @@ rule run_trim:
     # Use trim_galore to autodetect adaptor sequences 
     # Don't gzip since downstream application won't work
     input:
-        "data/fastq/{id}_1.fastq.gz",
-        "data/fastq/{id}_2.fastq.gz"
+        "data/fastq/{id}_1.fastq",
+        "data/fastq/{id}_2.fastq"
     output:
         temp("processed_data/fastq/{id}_1_val_1.fq"),
         temp("processed_data/fastq/{id}_2_val_2.fq")
@@ -44,7 +44,9 @@ rule run_pair:
         "processed_data/fastq/{id}_2_val_2_dedupped.fq"
     output:
         temp("processed_data/fastq/{id}_1_val_1_dedupped.fq.paired.fq"),
-        temp("processed_data/fastq/{id}_2_val_2_dedupped.fq.paired.fq")
+        temp("processed_data/fastq/{id}_2_val_2_dedupped.fq.paired.fq"),
+        temp("processed_data/fastq/{id}_1_val_1_dedupped.fq.single.fq"),
+        temp("processed_data/fastq/{id}_2_val_2_dedupped.fq.single.fq")
     conda:
         "../envs/process-fastq.yml"
     threads: 5
@@ -56,13 +58,17 @@ rule run_pair:
         fastq_pair {input} 2> {log.err} 1> {log.out}
         """
 
-rule rename_processed_files:
+rule gzip_processed_fastq:
     # Rename file
     input:
         "processed_data/fastq/{id}_{direction}_val_{direction}_dedupped.fq.paired.fq"
     output:
-        "processed_data/fastq/{id}_{direction}_processed.fastq"
+        "processed_data/fastq/{id}_{direction}_processed.fastq.gz"
+    log:
+        out = "log/rename_processed_files.{id}_{direction}.out",
+        err = "log/rename_processed_files.{id}_{direction}.err"
     shell:
         """
-        mv {input} {output}
+        gzip -cvf {input} > {output}
+        rm {input}
         """
