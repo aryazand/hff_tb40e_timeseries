@@ -36,5 +36,5 @@ bowtie2:
 
 create_track:
   track_type: "bw" # choose bw for bigwig or bg for bedgraph
-  binsize: 1 # size of bedgraph bins
+  binsize: 50 # size of bedgraph bins
   bedgraph_definition_line: "track type=bedGraph" 
