@@ -5,27 +5,42 @@ rule bam_to_bedgraph:
         bam = "results/aligned_reads/{sample}_{genome}_extract.bam",
         bai = "results/aligned_reads/{sample}_{genome}_extract.bam.bai"
     output:
-        for_bg = "results/tracks/{sample}_{genome}_for.bg",
-        rev_bg = "results/tracks/{sample}_{genome}_rev.bg"
+        bg = "results/tracks/{sample}_{genome}_{direction}.bg"
     log:
-        out_for = "log/bam_to_bedgraph.{sample}_{genome}_for.out",
-        out_rev = "log/bam_to_bedgraph.{sample}_{genome}_rev.out",
-        err_for = "log/bam_to_bedgraph.{sample}_{genome}_for.err",
-        err_rev = "log/bam_to_bedgraph.{sample}_{genome}_rev.err"
+        out = "log/bam_to_bedgraph.{sample}_{genome}_{direction}.out",
+        err = "log/bam_to_bedgraph.{sample}_{genome}_{direction}.err"
     conda:
         "../envs/create-track.yml"
     threads: 10
     params:
-        binsize = config['create_bedgraph']['binsize'],
+        strand = lambda wildcards: "forward" if wildcards.direction == "for" else "reverse",
+        binsize = config['create_track']['binsize'],
         genome_pattern_identifier = lambda wildcards: config['genomes'][wildcards.genome]['pattern_match'],
-        track_definition_line = config['create_bedgraph']['track_definition_line']
+        track_definition_line = config['create_track']['bedgraph_definition_line']
     shell:
       """
-      bamCoverage --outFileFormat bedgraph -p {threads} --binSize {params.binsize} -b {input.bam} --filterRNAstrand forward -o {output.for_bg} 2> {log.err_for} 1> {log.out_for}
-      gawk -i inplace -e '$1 ~ /{params.genome_pattern_identifier}/ {{print $0}}' {output.for_bg} 2> {log.err_for} 1> {log.out_for}
-      sed -i '1s/^/{params.track_definition_line}\\n/' {output.for_bg} 2> {log.err_for} 1> {log.out_for}
-      
-      bamCoverage --outFileFormat bedgraph -p {threads} --binSize {params.binsize} -b {input.bam} --filterRNAstrand reverse -o {output.rev_bg} 2> {log.err_rev} 1> {log.out_rev}
-      gawk -i inplace -e '$1 ~ /{params.genome_pattern_identifier}/ {{print $0}}' {output.rev_bg} 2> {log.err_rev} 1> {log.out_rev}
-      sed -i '1s/^/{params.track_definition_line}\\n/' {output.rev_bg} 2> {log.err_rev} 1> {log.out_rev}
+      bamCoverage --outFileFormat bedgraph -p {threads} --binSize {params.binsize} -b {input.bam} --filterRNAstrand {params.strand} -o {output.bg} 2> {log.err} 1> {log.out}
+      gawk -i inplace -e '$1 ~ /{params.genome_pattern_identifier}/ {{print $0}}' {output.bg} 2> {log.err} 1> {log.out}
+      sed -i '1s/^/{params.track_definition_line}\\n/' {output.bg} 2> {log.err} 1> {log.out}
+      """
+
+rule bam_to_bigwig:
+    # Create bigwig 
+    input:
+        bam = "results/aligned_reads/{sample}_{genome}_extract.bam",
+        bai = "results/aligned_reads/{sample}_{genome}_extract.bam.bai"
+    output:
+        bw = "results/tracks/{sample}_{genome}_{direction}.bw"
+    log:
+        out = "log/bam_to_bigwig.{sample}_{genome}_{direction}.out",
+        err = "log/bam_to_bigwig.{sample}_{genome}_{direction}.err"
+    threads: 10
+    conda:
+        "../envs/create-track.yml"
+    params:
+        binsize = config['create_track']['binsize'],
+        strand = lambda wildcards: "forward" if wildcards.direction == "for" else "reverse"
+    shell:
+      """
+      bamCoverage -p {threads} --binSize {params.binsize} -b {input.bam} --filterRNAstrand {params.strand} -o {output.bw} 2> {log.err} 1> {log.out}
       """

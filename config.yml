@@ -34,6 +34,7 @@ bowtie2:
   paired_options: "--fr --no-discordant" # options for paired end alignment
   additional_params: ""  # additional bowtie2 parameters 
 
-create_bedgraph:
+create_track:
+  track_type: "bw" # choose bw for bigwig or bg for bedgraph
   binsize: 1 # size of bedgraph bins
-  track_definition_line: "track type=bedGraph" 
+  bedgraph_definition_line: "track type=bedGraph" 
