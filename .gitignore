@@ -9,6 +9,7 @@
 /processed_data/
 /.snakemake/
 /container.sif
+/Dockerfile
 /scratch
 /.Rhistory
 /.Rproj.user
