@@ -27,7 +27,7 @@ rule fastqc_on_processed_fastq:
     shell: 
         "fastqc {input} -t {threads} -o results/fastqc 2> {log.err} 1> {log.out}"
 
-rule run_mutliqc:
+rule run_multiqc:
     input:
         expand("results/aligned_reads/{sample}_{genome}_extract.bam", sample = accession, genome = ['cmv', 'spikein', 'human']),
         expand("results/fastqc/{sample}_{direction}_fastqc.html", sample = accession, direction = ["1", "2"]),
@@ -40,4 +40,4 @@ rule run_mutliqc:
         out = "log/multiqc.out",
         err = "log/multiqc.err"
     shell:
-        "multiqc . --ignore '.snakemake/*' --outdir 'results/multiqc'"
+        "multiqc . --ignore '.snakemake/*' --outdir 'results/multiqc' --force"
