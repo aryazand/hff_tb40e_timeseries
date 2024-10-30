@@ -7,7 +7,9 @@ rule run_trim:
         "data/fastq/{id}_2.fastq"
     output:
         temp("processed_data/fastq/{id}_1_val_1.fq"),
-        temp("processed_data/fastq/{id}_2_val_2.fq")
+        temp("processed_data/fastq/{id}_2_val_2.fq"),
+        report_1 = "results/QC/trimming_reports/{id}_1.fastq_trimming_report.txt",
+        report_2 = "results/QC/trimming_reports/{id}_2.fastq_trimming_report.txt"
     conda:
         "../envs/process-fastq.yml"
     threads: 5
@@ -17,6 +19,8 @@ rule run_trim:
     shell:
 	    """
         trim_galore --paired --dont_gzip -j {threads} --output_dir processed_data/fastq {input} 2> {log.err} 1> {log.out}
+        mv processed_data/fastq/{wildcards.id}_1.fastq_trimming_report.txt {output.report_1}
+        mv processed_data/fastq/{wildcards.id}_2.fastq_trimming_report.txt {output.report_2}
         """
 
 rule run_dedup:

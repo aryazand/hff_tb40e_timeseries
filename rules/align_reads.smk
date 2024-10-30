@@ -3,7 +3,8 @@ rule align_reads:
         f1 = "processed_data/fastq/{sample}_1_processed.fastq.gz",
         f2 = "processed_data/fastq/{sample}_2_processed.fastq.gz"
     output:
-        temp("results/aligned_reads/{sample}.sam")
+        sam = temp("results/aligned_reads/{sample}.sam"),
+        metrics = "results/QC/alignment_reports/{sample}.txt"
     log:
         out = "log/align_reads_{sample}.out",
         err = "log/align_reads_{sample}.err"
@@ -16,7 +17,9 @@ rule align_reads:
         PAIRED = config['bowtie2']['paired_options'],
         ADDITIONAL = config['bowtie2']['additional_params']
     shell:
-        "bowtie2 -x {params.BOWTIE_INDEX} --threads {threads} --trim5 {params.UMI_SIZE} --trim3 {params.UMI_SIZE} {params.PAIRED} {params.ADDITIONAL} -1 {input.f1} -2 {input.f2} -S {output} 2> {log.err} 1> {log.out}"
+        """
+        bowtie2 -x {params.BOWTIE_INDEX} --threads {threads} --trim5 {params.UMI_SIZE} --trim3 {params.UMI_SIZE} {params.PAIRED} {params.ADDITIONAL} --met-file {output.metrics} -1 {input.f1} -2 {input.f2} -S {output.sam} 2> {log.err} 1> {log.out}
+        """
 
 rule sam_to_bam:
     input:
