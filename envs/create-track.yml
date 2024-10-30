@@ -29,6 +29,7 @@ dependencies:
   - gmp=6.3.0
   - h2=4.1.0
   - hpack=4.0.0
+  - htslib=1.21
   - hyperframe=6.0.1
   - idna=3.10
   - imagesize=1.4.1
@@ -103,6 +104,7 @@ dependencies:
   - qhull=2020.2
   - readline=8.2
   - requests=2.32.3
+  - samtools=1.21
   - scipy=1.14.1
   - setuptools=75.1.0
   - six=1.16.0

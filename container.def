@@ -4,14 +4,14 @@ Stage: spython-base
 
 %files
 envs/create-bed.yml /conda-envs/00af7495d10449ded2a78549f4f43f7f/environment.yaml
-envs/create-track.yml /conda-envs/928a372cd2387388f750b86be8ad57d6/environment.yaml
+envs/create-track.yml /conda-envs/a2493246cc40dd114ed66e10fd7016ed/environment.yaml
 envs/get-fastq.yml /conda-envs/fca64ab14a4673968105df974814c8bd/environment.yaml
 envs/map-reads.yml /conda-envs/91d4249c2ee6ca4598b4af4c437204d5/environment.yaml
 envs/process-fastq.yml /conda-envs/0de3e83d1c1a588e01b3be18dd5e57da/environment.yaml
 envs/proseq-qc.yml /conda-envs/768b673a078bd4f669a9a5776fd03df8/environment.yaml
 %labels
 io.github.snakemake.containerized="true"
-io.github.snakemake.conda_env_hash="90b38e9d166ed2349dc69db325df6499f7a198f5e405ce07f9412ef2860b19d5"
+io.github.snakemake.conda_env_hash="584c0d288cbeaad808c910658e5e508c05abe080d291182738dba1083191ae4e"
 %post
 
 # Step 1: Retrieve conda environments
@@ -41,7 +41,7 @@ mkdir -p /conda-envs/00af7495d10449ded2a78549f4f43f7f
 
 # Conda environment:
 #   source: envs/create-track.yml
-#   prefix: /conda-envs/928a372cd2387388f750b86be8ad57d6
+#   prefix: /conda-envs/a2493246cc40dd114ed66e10fd7016ed
 #   name: create-track
 #   channels:
 #     - conda-forge
@@ -73,6 +73,7 @@ mkdir -p /conda-envs/00af7495d10449ded2a78549f4f43f7f
 #     - gmp=6.3.0
 #     - h2=4.1.0
 #     - hpack=4.0.0
+#     - htslib=1.21
 #     - hyperframe=6.0.1
 #     - idna=3.10
 #     - imagesize=1.4.1
@@ -147,6 +148,7 @@ mkdir -p /conda-envs/00af7495d10449ded2a78549f4f43f7f
 #     - qhull=2020.2
 #     - readline=8.2
 #     - requests=2.32.3
+#     - samtools=1.21
 #     - scipy=1.14.1
 #     - setuptools=75.1.0
 #     - six=1.16.0
@@ -174,7 +176,7 @@ mkdir -p /conda-envs/00af7495d10449ded2a78549f4f43f7f
 #     - zstandard=0.23.0
 #     - zstd=1.5.6
 #   prefix: /home/arya/miniforge3/envs/create-track
-mkdir -p /conda-envs/928a372cd2387388f750b86be8ad57d6
+mkdir -p /conda-envs/a2493246cc40dd114ed66e10fd7016ed
 
 # Conda environment:
 #   source: envs/get-fastq.yml
@@ -551,7 +553,7 @@ mkdir -p /conda-envs/768b673a078bd4f669a9a5776fd03df8
 # Step 2: Generate conda environments
 
 mamba env create --prefix /conda-envs/00af7495d10449ded2a78549f4f43f7f --file /conda-envs/00af7495d10449ded2a78549f4f43f7f/environment.yaml && \
-mamba env create --prefix /conda-envs/928a372cd2387388f750b86be8ad57d6 --file /conda-envs/928a372cd2387388f750b86be8ad57d6/environment.yaml && \
+mamba env create --prefix /conda-envs/a2493246cc40dd114ed66e10fd7016ed --file /conda-envs/a2493246cc40dd114ed66e10fd7016ed/environment.yaml && \
 mamba env create --prefix /conda-envs/fca64ab14a4673968105df974814c8bd --file /conda-envs/fca64ab14a4673968105df974814c8bd/environment.yaml && \
 mamba env create --prefix /conda-envs/91d4249c2ee6ca4598b4af4c437204d5 --file /conda-envs/91d4249c2ee6ca4598b4af4c437204d5/environment.yaml && \
 mamba env create --prefix /conda-envs/0de3e83d1c1a588e01b3be18dd5e57da --file /conda-envs/0de3e83d1c1a588e01b3be18dd5e57da/environment.yaml && \
