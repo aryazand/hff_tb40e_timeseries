@@ -1,7 +1,7 @@
 /data/**
 !/data/fastq
-!/data/fastq/SRR16301857_sample_1.fq
-!/data/fastq/SRR16301857_sample_2.fq
+!/data/fastq/sample_1.fastq
+!/data/fastq/sample_2.fastq
 !/data/genome
 !/data/genome/genome_download.sh
 /log/
