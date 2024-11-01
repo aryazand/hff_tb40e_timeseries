@@ -1,7 +1,9 @@
 /data/**
 !/data/fastq
-!/data/fastq/sample_1.fastq
-!/data/fastq/sample_2.fastq
+!/data/fastq/sample1_1.fastq
+!/data/fastq/sample1_2.fastq
+!/data/fastq/sample2_1.fastq
+!/data/fastq/sample2_2.fastq
 !/data/genome
 !/data/genome/genome_download.sh
 /log/
