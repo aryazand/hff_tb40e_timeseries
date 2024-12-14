@@ -8,7 +8,7 @@ mapped_reads <- read.delim(args[1], sep = "\t")
 # Reformat table, 1 row per sample
 mapped_reads <- mapped_reads |> 
   separate(col = "Sample", 
-           sep = "_", 
+           sep = "_(?=[A-Za-z0-9]+_extract$)|_(?=extract$)", # select last and second to last underscores, assuming each line ends with "extract"
            into = c("Sample", "Organism", "Extra")) |>
   select(-Extra) |> 
   pivot_wider(id_cols = "Sample", 

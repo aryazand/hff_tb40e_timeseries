@@ -1,7 +1,7 @@
 rule align_reads:
     input:
-        f1 = "processed_data/fastq/{sample}_1_processed.fastq.gz",
-        f2 = "processed_data/fastq/{sample}_2_processed.fastq.gz"
+        f1 = "processed_data/fastq/{sample}_R1_processed.fastq.gz",
+        f2 = "processed_data/fastq/{sample}_R2_processed.fastq.gz"
     output:
         sam = temp("results/aligned_reads/{sample}.sam"),
         metrics = "results/QC/alignment_reports/{sample}.txt"

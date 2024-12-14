@@ -1,7 +1,7 @@
 rule calculate_readdepth:
     # Calculate normalization factors for tracks
     input:
-        bamfiles = expand(["results/aligned_reads/{sample}_{genome}_extract.bam"], sample = accession, genome = ['cmv', 'human', 'spikein']),
+        bamfiles = expand(["results/aligned_reads/{sample}_{genome}_extract.bam"], sample = sample_names, genome = ['cmv', 'human', 'spikein']),
         script = "scripts/calculate_normalization_factor.R"
     output:
         "results/QC/total_mapped_reads.tsv"
@@ -47,7 +47,7 @@ rule bam_to_bedgraph:
         track_definition_line = config['create_track']['bedgraph_definition_line']
     shell:
         """
-        sample_name="$(basename {input.bam} | cut -d'_' -f1)"
+        sample_name="$(basename {input.bam} | rev | cut -d "_" -f 3- | rev)"
         scale_factor=$(awk '$1 ~ /'$sample_name'/ {{print $9;}}' {input.norm_table})
         bamCoverage --outFileFormat bedgraph -p {threads} --binSize {params.binsize} --scaleFactor $scale_factor -b {input.bam} --filterRNAstrand {params.strand} -o {output.bg} 2> {log.err} 1> {log.out}
         gawk -i inplace -e '$1 ~ /{params.genome_pattern_identifier}/ {{print $0}}' {output.bg} 2> {log.err} 1> {log.out}
@@ -74,7 +74,7 @@ rule bam_to_bigwig:
         strand = lambda wildcards: "forward" if wildcards.direction == "for" else "reverse",
     shell:
         """
-        sample_name="$(basename {input.bam} | cut -d'_' -f1)"
+        sample_name="$(basename {input.bam} | rev | cut -d "_" -f 3- | rev)"
         scale_factor=$(awk '$1 ~ /'$sample_name'/ {{print $9;}}' {input.norm_table})
         bamCoverage -p {threads} --binSize {params.binsize} --scaleFactor $scale_factor -b {input.bam} --filterRNAstrand {params.strand} -o {output.bw} 2> {log.err} 1> {log.out}
         """

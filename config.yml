@@ -1,8 +1,3 @@
-##############################
-###  Sample configuration  ###
-##############################
-
-
 ###############################
 ### Analysis config options ###
 ###############################
@@ -22,11 +17,14 @@ genomes:
     genome_name: "spodoptera"
     pattern_match: "Spodoptera"
 
-fastq_sample: 100000
+fastq_sample:
 
 genomes_to_extact: 
   - cmv 
   - human
+
+fastq:
+  directory: "data/fastq/"
 
 bowtie2:
   index: "data/genome/human_tb40E_spodoptera_combined_genome" # reference genome
