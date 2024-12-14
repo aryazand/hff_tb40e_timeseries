@@ -1,18 +1,23 @@
-with open('SRR_Acc_List.txt') as f:
-    accession = [line.rstrip() for line in f]
-snakemake
-accession = [i for i in accession if not '#' in i]
+include: "rules/common.smk"
+
+
+import pandas as pd
+import pathlib
+from snakemake.utils import Paramspace
+samples = Paramspace(pd.read_csv("sample_metadata.csv"))
+sample_names = set(samples.sample_name)
+sample_ext = get_fastq_extention(samples)
 
 configfile: "config.yml"
 containerized: "container.sif"
 
 rule all:
     input:
-        expand("processed_data/fastq/{sample}_{direction}_processed.fastq.gz", sample = accession, direction = ["1", "2"]),
-        expand("results/aligned_reads/{sample}_{genome}.bam.bai", sample = accession, genome = ['allgenomes_sorted', 'cmv_extract', 'human_extract']),
-        expand("results/aligned_reads/{sample}_{genome}_extract.bam", sample = accession, genome = ['cmv', 'spikein', 'human']),
-        expand("results/bed/{sample}_{genome}.bed", sample = accession, genome = ['cmv', "human"]),
-        expand("results/tracks/{sample}_{genome}_{direction}.{track_type}", sample = accession, genome = ['cmv', "human"], direction = ['for', 'rev'], track_type = config['create_track']['track_type']),
+        expand("processed_data/fastq/{sample}_R{direction}_processed.fastq.gz", sample = sample_names, direction = ["1", "2"]),
+        expand("results/aligned_reads/{sample}_{genome}.bam.bai", sample = sample_names, genome = ['allgenomes_sorted', 'cmv_extract', 'human_extract']),
+        expand("results/aligned_reads/{sample}_{genome}_extract.bam", sample = sample_names, genome = ['cmv', 'spikein', 'human']),
+        expand("results/bed/{sample}_{genome}.bed", sample = sample_names, genome = ['cmv', "human"]),
+        expand("results/tracks/{sample}_{genome}_{direction}.{track_type}", sample = sample_names, genome = ['cmv', "human"], direction = ['for', 'rev'], track_type = config['create_track']['track_type']),
         "results/QC/multiqc/multiqc_report.html"
 
 include: "rules/get_fastq.smk"
