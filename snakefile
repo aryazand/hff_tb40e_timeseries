@@ -18,6 +18,7 @@ rule all:
         expand("results/aligned_reads/{sample}_{genome}_extract.bam", sample = sample_names, genome = ['cmv', 'spikein', 'human']),
         expand("results/bed/{sample}_{genome}.bed", sample = sample_names, genome = ['cmv', "human"]),
         expand("results/tracks/{sample}_{genome}_{direction}.{track_type}", sample = sample_names, genome = ['cmv', "human"], direction = ['for', 'rev'], track_type = config['create_track']['track_type']),
+        expand("results/tracks/{sample}_{genome}_{direction}_fiverpime.bg", sample = sample_names, genome = ['cmv', "human"], direction = ['for', 'rev']),
         "results/QC/multiqc/multiqc_report.html"
 
 include: "rules/get_fastq.smk"
