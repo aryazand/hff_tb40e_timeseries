@@ -37,13 +37,14 @@ rule trim_reads_pe:
     # Trim adaptors sequences 
     # Use trim_galore to autodetect adaptor sequences 
     # Don't gzip since downstream application won't work
-    # ext = set([''.join(pathlib.Path(x).suffixes) for x in samples[samples.sample_name == wc.id].filename.to_list()])
     input:
-        "processed_data/fastq/{id}_R1" + sample_ext,
-        "processed_data/fastq/{id}_R2" + sample_ext
+        os.path.join("processed_data/fastq/{id}_R1", sample_ext),
+        os.path.join("processed_data/fastq/{id}_R2", sample_ext)
     output:
         temp("processed_data/fastq/{id}_R1_val_1.fq"),
         temp("processed_data/fastq/{id}_R2_val_2.fq"),
+        temp(os.path.join("processed_data/fastq/{id}_R1", sample_ext, "_trimming_report.txt")),
+        temp(os.path.join("processed_data/fastq/{id}_R2", sample_ext, "_trimming_report.txt"))
     conda:
         "../envs/process-fastq.yml"
     threads: 5

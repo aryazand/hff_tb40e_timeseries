@@ -1,6 +1,6 @@
 rule fastqc:
     input: 
-        "processed_data/fastq/{id}_R{direction}" + sample_ext
+        os.path.join("processed_data/fastq/{id}_R{direction}", sample_ext)
     output: 
         "results/QC/fastqc/{id}_R{direction}_fastqc.html"
     wildcard_constraints:

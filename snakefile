@@ -1,6 +1,6 @@
 include: "rules/common.smk"
 
-
+import os
 import pandas as pd
 import pathlib
 from snakemake.utils import Paramspace
@@ -21,7 +21,6 @@ rule all:
         expand("results/tracks/{sample}_{genome}_{direction}_fiverpime.bg", sample = sample_names, genome = ['cmv', "human"], direction = ['for', 'rev']),
         "results/QC/multiqc/multiqc_report.html"
 
-include: "rules/common.smk"
 include: "rules/get_fastq.smk"
 include: "rules/process_fastq.smk"
 include: "rules/quality_control.smk"
