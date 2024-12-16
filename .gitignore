@@ -16,3 +16,7 @@
 /.Rhistory
 /.Rproj.user
 *.Rproj
+/.cache
+/.config
+/.java
+/dag.svg
