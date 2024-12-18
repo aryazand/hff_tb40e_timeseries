@@ -15,3 +15,7 @@ To then create an apptainer image, we use the following:
 apptainer build container.sif container.def 
 ```
 
+## TO DO
+1. create recipe to download genomes 
+2. create recipe to download fastq 
+3. create recipe to get chrom.size data. Ensure chromosome names match UCSC bedgraphtobigwig  
