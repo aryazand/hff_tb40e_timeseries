@@ -16,9 +16,9 @@ dependencies:
   - bwidget=1.9.14=ha770c72_1
   - bzip2=1.0.8=h4bc722e_7
   - c-ares=1.34.2=heb4867d_0
-  - ca-certificates=2024.8.30=hbcca054_0
+  - ca-certificates=2024.12.14=hbcca054_0
   - cairo=1.18.0=hebfffa5_3
-  - certifi=2024.8.30=pyhd8ed1ab_0
+  - certifi=2024.12.14=pyhd8ed1ab_0
   - cffi=1.17.1=py312h06ac9bb_0
   - charset-normalizer=3.4.0=pyhd8ed1ab_1
   - colorama=0.4.6=pyhd8ed1ab_1
@@ -90,6 +90,7 @@ dependencies:
   - libnghttp2=1.64.0=h161d5f1_0
   - libnsl=2.0.1=hd590300_0
   - libopenblas=0.3.27=pthreads_hac2b453_1
+  - libopenssl-static=3.4.0=hb9d3cd8_0
   - libpng=1.6.44=hadc24fc_0
   - libsanitizer=14.2.0=h2a3dede_1
   - libsqlite=3.47.0=hadc24fc_1
@@ -108,6 +109,7 @@ dependencies:
   - matplotlib-base=3.9.2=py312hd3ec401_2
   - mpfr=4.2.1=h90cbb55_3
   - munkres=1.1.4=pyh9f0ad1d_0
+  - mysql-connector-c=6.1.11=h659d440_1008
   - ncurses=6.5=he02047a_1
   - numpy=1.26.4=py312heda63a1_0
   - numpydoc=1.8.0=pyhd8ed1ab_1
@@ -178,6 +180,7 @@ dependencies:
   - tktable=2.10=h8bc8fbc_6
   - tomli=2.0.2=pyhd8ed1ab_0
   - tzdata=2024b=hc8b5060_0
+  - ucsc-bedgraphtobigwig=472=h664eb37_2
   - unicodedata2=15.1.0=py312h66e93f0_1
   - urllib3=2.2.3=pyhd8ed1ab_1
   - wheel=0.44.0=pyhd8ed1ab_0

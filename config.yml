@@ -7,11 +7,13 @@ genomes:
     accession: "GCF_000001405.40"
     genome_name: "human_GRCh38"
     pattern_match: "Homo_sapiens"
+    chrom_sizes_file: "data/genome/human.chrom.sizes"       
   cmv:
     accession: "GCA_027926625.1"
     genome_name: "cmv_tb40E"
     chr_name_change: "KF297339.1"
     pattern_match: "KF297339.1"
+    chrom_sizes_file: "data/genome/cmv.chrom.sizes"
   spikein:
     accession: "GCF_023101765.2"
     genome_name: "spodoptera"
@@ -34,5 +36,5 @@ bowtie2:
 
 create_track:
   track_type: "bw" # choose bw for bigwig or bg for bedgraph
-  binsize: 50 # size of bedgraph bins
-  bedgraph_definition_line: "track type=bedGraph" 
+  binsize: 1 # size of bedgraph bins
+  bedgraph_definition_line: "track type=bedGraph"

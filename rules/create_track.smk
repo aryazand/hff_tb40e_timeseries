@@ -87,22 +87,38 @@ rule five_prime_ends_bedgraph:
         bam = "results/aligned_reads/{sample}_{genome}_extract.bam",
         norm_table = "results/QC/total_mapped_reads.tsv"
     output:
-        bg = "results/tracks/{sample}_{genome}_{direction}_fiverpime.bg"
+        bg = temp("results/tracks/{sample}_{genome}_{direction}_fiverpime.bg")
     log:
-        out = "log/five_prime_ends_bedgraph.{sample}_{genome}_{direction}_fiveprime.out",
-        err = "log/five_prime_ends_bedgraph.{sample}_{genome}_{direction}_fiveprime.err"
+        out = "log/five_prime_ends_bedgraph.{sample}_{genome}_{direction}.out",
+        err = "log/five_prime_ends_bedgraph.{sample}_{genome}_{direction}.err"
     conda:
         "../envs/create-track.yml"
     threads: 10
     params:
-        strand = lambda wildcards: "+" if wildcards.direction == "for" else "-",
-        binsize = config['create_track']['binsize'],
-        genome_pattern_identifier = lambda wildcards: config['genomes'][wildcards.genome]['pattern_match'],
-        track_definition_line = config['create_track']['bedgraph_definition_line']
+        strand = lambda wildcards: "+" if wildcards.direction == "for" else "-"
     shell:
         """
         sample_name="$(basename {input.bam} | rev | cut -d "_" -f 3- | rev)"
         scale_factor=$(awk '$1 ~ /'$sample_name'/ {{print $9;}}' {input.norm_table})
-        bedtools genomecov -5 -bg -scale $scale_factor -strand {params.strand} -ibam {input.bam} > {output.bg} 2> {log.err} 1> {log.out}
+        bedtools genomecov -5 -bg -scale $scale_factor -strand {params.strand} -ibam {input.bam} | sort -k1,1 -k2,2n > {output.bg}
+        """
+
+rule five_prime_ends_bigwig:
+    # create bedgraph of 5' ends only
+    input:
+        bg = "results/tracks/{sample}_{genome}_{direction}_fiverpime.bg"
+    output:
+        bw = "results/tracks/{sample}_{genome}_{direction}_fiverpime.bw"
+    log:
+        out = "log/five_prime_ends_bigwig.{sample}_{genome}_{direction}.out",
+        err = "log/five_prime_ends_bigwig.{sample}_{genome}_{direction}.err"
+    conda:
+        "../envs/create-track.yml"
+    threads: 10
+    params:
+        chr_sizes = lambda wildcards: config['genomes'][wildcards.genome]['chrom_sizes_file']
+    shell:
+        """
+        bedGraphToBigWig {input.bg} {params.chr_sizes} {output.bw} 2> {log.err} 1> {log.out}
         """
         
