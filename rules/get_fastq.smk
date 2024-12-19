@@ -44,3 +44,38 @@ rule sra_to_fastq:
             echo "no subsampling of fastq"
         fi
         """
+
+rule download_genome:
+    output: 
+        "data/genome/{species}.fna"
+    conda:
+        "../envs/get-genome.yml"
+    log:
+        out = "log/download_genome_{species}.out",
+        err = "log/download_genome_{species}.err"
+    params:
+        accession = lambda wildcards: config["genomes"][wildcards.species]["accession"]
+    shell:
+        """
+        datasets download genome accession {params.accession} --filename {wildcards.species}.zip
+        unzip {wildcards.species}.zip -d {wildcards.species}
+        mv {wildcards.species}/ncbi_dataset/data/{params.accession}/*.fna {output}
+        sed -i -re 's/(>\S*)\s.*/\\1/' data/genome/{wildcards.species}.fna
+        rm {wildcards.species}.zip
+        rm -r {wildcards.species}
+        """
+
+rule get_chrom_sizes:
+    input:
+        "data/genome/{species}.fna"
+    conda:
+        "../envs/get-genome.yml"
+    output:
+        "data/genome/{species}.chrom.sizes"
+    log:
+        out = "log/get_chrom_sizes_{species}.out",
+        err = "log/get_chrom_sizes_{species}.err"
+    shell:
+        """
+        bioawk -cfastx '{{ print $name, length($seq) }}' {input} > {output} 
+        """

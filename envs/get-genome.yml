@@ -1,0 +1,15 @@
+name: get-genome
+channels:
+  - bioconda
+  - conda-forge
+dependencies:
+  - _libgcc_mutex=0.1=conda_forge
+  - _openmp_mutex=4.5=2_gnu
+  - bioawk=1.0=h577a1d6_13
+  - ca-certificates=2024.12.14=hbcca054_0
+  - libgcc=14.2.0=h77fa898_1
+  - libgomp=14.2.0=h77fa898_1
+  - libzlib=1.3.1=hb9d3cd8_2
+  - ncbi-datasets-cli=16.38.1=ha770c72_0
+  - zlib=1.3.1=hb9d3cd8_2
+prefix: /home/arya/miniforge3/envs/get-genome
