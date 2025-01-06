@@ -1,0 +1,7 @@
+name: ncbi-datasets
+channels:
+  - conda-forge
+dependencies:
+  - ca-certificates=2024.12.14=hbcca054_0
+  - ncbi-datasets-cli=16.38.1=ha770c72_0
+prefix: /home/arya/miniforge3/envs/ncbi-datasets

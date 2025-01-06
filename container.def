@@ -5,11 +5,15 @@ Stage: spython-base
 %files
 envs/create-bed.yml /conda-envs/00af7495d10449ded2a78549f4f43f7f/environment.yaml
 envs/create-track.yml /conda-envs/219bc7fe37421026d8ab69318e25a151/environment.yaml
+envs/get-fastq.yml /conda-envs/fca64ab14a4673968105df974814c8bd/environment.yaml
+envs/get-genome.yml /conda-envs/e8a29de2643cecbc7b710b66fd79b695/environment.yaml
 envs/map-reads.yml /conda-envs/91d4249c2ee6ca4598b4af4c437204d5/environment.yaml
+envs/process-fastq.yml /conda-envs/0de3e83d1c1a588e01b3be18dd5e57da/environment.yaml
 envs/proseq-qc.yml /conda-envs/768b673a078bd4f669a9a5776fd03df8/environment.yaml
+envs/ucsc_tools.yml /conda-envs/917640cfba188b626c271929cbfe0ed0/environment.yaml
 %labels
 io.github.snakemake.containerized="true"
-io.github.snakemake.conda_env_hash="b57aaba3c3f9d745a5f199831eef5b944537944c9053e87e123b231fff9589d8"
+io.github.snakemake.conda_env_hash="cbddbdf76b77efa546d8acdf6d46ef7251e07c295c87f0ad9ee64dc1d185c2ce"
 %post
 
 # Step 2: Retrieve conda environments
@@ -244,6 +248,94 @@ mkdir -p /conda-envs/00af7495d10449ded2a78549f4f43f7f
 mkdir -p /conda-envs/219bc7fe37421026d8ab69318e25a151
 
 # Conda environment:
+#   source: envs/get-fastq.yml
+#   prefix: /conda-envs/fca64ab14a4673968105df974814c8bd
+#   name: get-fastq
+#   channels:
+#     - conda-forge
+#     - bioconda
+#     - defaults
+#   dependencies:
+#     - _libgcc_mutex=0.1
+#     - _openmp_mutex=4.5
+#     - bbmap=39.10
+#     - bzip2=1.0.8
+#     - c-ares=1.34.1
+#     - ca-certificates=2024.8.30
+#     - curl=8.8.0
+#     - htslib=1.21
+#     - icu=70.1
+#     - keyutils=1.6.1
+#     - krb5=1.21.3
+#     - libcurl=8.8.0
+#     - libdeflate=1.21
+#     - libedit=3.1.20191231
+#     - libev=4.33
+#     - libgcc=14.1.0
+#     - libgcc-ng=14.1.0
+#     - libgomp=14.1.0
+#     - libiconv=1.17
+#     - libnghttp2=1.58.0
+#     - libssh2=1.11.0
+#     - libstdcxx=14.1.0
+#     - libstdcxx-ng=14.1.0
+#     - libxml2=2.9.14
+#     - libzlib=1.2.13
+#     - ncbi-vdb=3.1.1
+#     - ncurses=6.5
+#     - openjdk=11.0.1
+#     - openssl=3.3.2
+#     - ossuuid=1.6.2
+#     - perl=5.26.2
+#     - perl-app-cpanminus=1.7044
+#     - perl-business-isbn=3.004
+#     - perl-business-isbn-data=20140910.003
+#     - perl-carp=1.38
+#     - perl-constant=1.33
+#     - perl-data-dumper=2.173
+#     - perl-encode=2.88
+#     - perl-exporter=5.72
+#     - perl-extutils-makemaker=7.36
+#     - perl-file-path=2.16
+#     - perl-file-temp=0.2304
+#     - perl-mime-base64=3.15
+#     - perl-parent=0.236
+#     - perl-uri=1.76
+#     - perl-xml-libxml=2.0132
+#     - perl-xml-namespacesupport=1.12
+#     - perl-xml-sax=1.02
+#     - perl-xml-sax-base=1.09
+#     - perl-xsloader=0.24
+#     - samtools=1.21
+#     - seqtk=1.4
+#     - sra-tools=3.1.1
+#     - xz=5.2.6
+#     - zlib=1.2.13
+#     - zstd=1.5.6
+#   prefix: /home/arya/miniforge3/envs/get-fastq
+mkdir -p /conda-envs/fca64ab14a4673968105df974814c8bd
+
+# Conda environment:
+#   source: envs/get-genome.yml
+#   prefix: /conda-envs/e8a29de2643cecbc7b710b66fd79b695
+#   name: get-genome
+#   channels:
+#     - bioconda
+#     - conda-forge
+#   dependencies:
+#     - _libgcc_mutex=0.1=conda_forge
+#     - _openmp_mutex=4.5=2_gnu
+#     - bioawk=1.0=h577a1d6_13
+#     - ca-certificates=2024.12.14=hbcca054_0
+#     - libgcc=14.2.0=h77fa898_1
+#     - libgomp=14.2.0=h77fa898_1
+#     - libzlib=1.3.1=hb9d3cd8_2
+#     - ncbi-datasets-cli=16.38.1=ha770c72_0
+#     - zlib=1.3.1=hb9d3cd8_2
+#   prefix: /home/arya/miniforge3/envs/get-genome
+mkdir -p /conda-envs/e8a29de2643cecbc7b710b66fd79b695
+
+# Conda environment:
 #   source: envs/map-reads.yml
 #   prefix: /conda-envs/91d4249c2ee6ca4598b4af4c437204d5
 #   name: map_reads
@@ -294,6 +386,110 @@ mkdir -p /conda-envs/219bc7fe37421026d8ab69318e25a151
 #     - zstd=1.5.6
 #   prefix: /home/arya/miniforge3/envs/map_reads
 mkdir -p /conda-envs/91d4249c2ee6ca4598b4af4c437204d5
+
+# Conda environment:
+#   source: envs/process-fastq.yml
+#   prefix: /conda-envs/0de3e83d1c1a588e01b3be18dd5e57da
+#   name: process-fastq
+#   channels:
+#     - conda-forge
+#     - bioconda
+#     - defaults
+#   dependencies:
+#     - _libgcc_mutex=0.1
+#     - _openmp_mutex=4.5
+#     - alsa-lib=1.2.12
+#     - bzip2=1.0.8
+#     - ca-certificates=2024.8.30
+#     - cairo=1.18.0
+#     - cffi=1.17.1
+#     - cutadapt=4.9
+#     - dnaio=1.2.2
+#     - expat=2.6.3
+#     - fastq-pair=1.0
+#     - fastqc=0.12.1
+#     - font-ttf-dejavu-sans-mono=2.37
+#     - font-ttf-inconsolata=3.000
+#     - font-ttf-source-code-pro=2.038
+#     - font-ttf-ubuntu=0.83
+#     - fontconfig=2.14.2
+#     - fonts-conda-ecosystem=1
+#     - fonts-conda-forge=1
+#     - freetype=2.12.1
+#     - giflib=5.2.2
+#     - graphite2=1.3.13
+#     - harfbuzz=9.0.0
+#     - icu=75.1
+#     - isa-l=2.31.0
+#     - keyutils=1.6.1
+#     - krb5=1.21.3
+#     - lcms2=2.16
+#     - ld_impl_linux-64=2.43
+#     - lerc=4.0.0
+#     - libcups=2.3.3
+#     - libdeflate=1.22
+#     - libedit=3.1.20191231
+#     - libexpat=2.6.3
+#     - libffi=3.4.2
+#     - libgcc=14.1.0
+#     - libgcc-ng=14.1.0
+#     - libglib=2.82.1
+#     - libgomp=14.1.0
+#     - libiconv=1.17
+#     - libjpeg-turbo=3.0.0
+#     - libnsl=2.0.1
+#     - libpng=1.6.44
+#     - libsqlite=3.46.1
+#     - libstdcxx=14.1.0
+#     - libstdcxx-ng=14.1.0
+#     - libtiff=4.7.0
+#     - libuuid=2.38.1
+#     - libwebp-base=1.4.0
+#     - libxcb=1.17.0
+#     - libxcrypt=4.4.36
+#     - libzlib=1.3.1
+#     - ncurses=6.5
+#     - openjdk=22.0.1
+#     - openssl=3.3.2
+#     - pbzip2=1.1.13
+#     - pcre2=10.44
+#     - perl=5.32.1
+#     - pigz=2.8
+#     - pip=24.2
+#     - pixman=0.43.2
+#     - pthread-stubs=0.4
+#     - pycparser=2.22
+#     - python=3.12.7
+#     - python-isal=1.7.1
+#     - python-zlib-ng=0.5.1
+#     - python_abi=3.12
+#     - readline=8.2
+#     - seqkit=2.8.2
+#     - setuptools=75.1.0
+#     - tk=8.6.13
+#     - trim-galore=0.6.10
+#     - tzdata=2024b
+#     - wheel=0.44.0
+#     - xopen=2.0.2
+#     - xorg-libice=1.1.1
+#     - xorg-libsm=1.2.4
+#     - xorg-libx11=1.8.10
+#     - xorg-libxau=1.0.11
+#     - xorg-libxdmcp=1.1.5
+#     - xorg-libxext=1.3.6
+#     - xorg-libxfixes=6.0.1
+#     - xorg-libxi=1.8.2
+#     - xorg-libxrender=0.9.11
+#     - xorg-libxt=1.3.0
+#     - xorg-libxtst=1.2.5
+#     - xorg-xorgproto=2024.1
+#     - xz=5.2.6
+#     - zlib=1.3.1
+#     - zlib-ng=2.2.2
+#     - zstandard=0.23.0
+#     - zstd=1.5.6
+#   prefix: /home/arya/miniforge3/envs/process-fastq
+mkdir -p /conda-envs/0de3e83d1c1a588e01b3be18dd5e57da
 
 # Conda environment:
 #   source: envs/proseq-qc.yml
@@ -443,12 +639,48 @@ mkdir -p /conda-envs/91d4249c2ee6ca4598b4af4c437204d5
 #   prefix: /home/arya/miniforge3/envs/proseq-qc
 mkdir -p /conda-envs/768b673a078bd4f669a9a5776fd03df8
 
+# Conda environment:
+#   source: envs/ucsc_tools.yml
+#   prefix: /conda-envs/917640cfba188b626c271929cbfe0ed0
+#   name: ucsc_tools
+#   channels:
+#     - bioconda
+#     - conda-forge
+#   dependencies:
+#     - _libgcc_mutex=0.1=conda_forge
+#     - _openmp_mutex=4.5=2_gnu
+#     - ca-certificates=2024.12.14=hbcca054_0
+#     - libgcc=14.2.0=h77fa898_1
+#     - libgcc-ng=14.2.0=h69a702a_1
+#     - libgomp=14.2.0=h77fa898_1
+#     - libopenssl-static=3.4.0=hb9d3cd8_0
+#     - libpng=1.6.44=hadc24fc_0
+#     - libstdcxx=14.2.0=hc0a3c3a_1
+#     - libstdcxx-ng=14.2.0=h4852527_1
+#     - libuuid=2.38.1=h0b41bf4_0
+#     - libzlib=1.3.1=hb9d3cd8_2
+#     - mysql-connector-c=6.1.11=h659d440_1008
+#     - openssl=3.4.0=hb9d3cd8_0
+#     - ucsc-bedtobigbed=473=h52f6b31_1
+#     - ucsc-fatotwobit=472=h52f6b31_1
+#     - ucsc-genepredtobiggenepred=469=h664eb37_1
+#     - ucsc-gff3togenepred=469=h664eb37_1
+#     - ucsc-gtftogenepred=469=h664eb37_1
+#     - ucsc-stringify=472=h52f6b31_1
+#     - zlib=1.3.1=hb9d3cd8_2
+#   prefix: /home/arya/miniforge3/envs/ucsc_tools
+mkdir -p /conda-envs/917640cfba188b626c271929cbfe0ed0
+
 # Step 3: Generate conda environments
 
 conda env create --prefix /conda-envs/00af7495d10449ded2a78549f4f43f7f --file /conda-envs/00af7495d10449ded2a78549f4f43f7f/environment.yaml && \
 conda env create --prefix /conda-envs/219bc7fe37421026d8ab69318e25a151 --file /conda-envs/219bc7fe37421026d8ab69318e25a151/environment.yaml && \
+conda env create --prefix /conda-envs/fca64ab14a4673968105df974814c8bd --file /conda-envs/fca64ab14a4673968105df974814c8bd/environment.yaml && \
+conda env create --prefix /conda-envs/e8a29de2643cecbc7b710b66fd79b695 --file /conda-envs/e8a29de2643cecbc7b710b66fd79b695/environment.yaml && \
 conda env create --prefix /conda-envs/91d4249c2ee6ca4598b4af4c437204d5 --file /conda-envs/91d4249c2ee6ca4598b4af4c437204d5/environment.yaml && \
+conda env create --prefix /conda-envs/0de3e83d1c1a588e01b3be18dd5e57da --file /conda-envs/0de3e83d1c1a588e01b3be18dd5e57da/environment.yaml && \
 conda env create --prefix /conda-envs/768b673a078bd4f669a9a5776fd03df8 --file /conda-envs/768b673a078bd4f669a9a5776fd03df8/environment.yaml && \
+conda env create --prefix /conda-envs/917640cfba188b626c271929cbfe0ed0 --file /conda-envs/917640cfba188b626c271929cbfe0ed0/environment.yaml && \
 conda clean --all -y
 %runscript
 exec /bin/bash "$@"

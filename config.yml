@@ -1,32 +1,40 @@
-###############################
-### Analysis config options ###
-###############################
+###################################################
+### Config for obtaining genomic data from NCBI ###
+###################################################
 
 genomes:
   human:
     accession: "GCF_000001405.40"
-    genome_name: "human_GRCh38"
+    genome_name: "GRCh38"
     pattern_match: "Homo_sapiens"
-    chrom_sizes_file: "data/genome/human.chrom.sizes"       
+    shortlabel: "human hg38"
+    longlabel: "Annotated hg38 genome"
+    ucsc-defaultPos: "chr1:1-10000"
   cmv:
     accession: "GCA_027926625.1"
-    genome_name: "cmv_tb40E"
+    genome_name: "KF297339.1"
     chr_name_change: "KF297339.1"
     pattern_match: "KF297339.1"
-    chrom_sizes_file: "data/genome/cmv.chrom.sizes"
-  spikein:
+    longlabel: "Annotated CDS for HCMV strain TB40-E (KF297339.1)"
+    shortlabel: "HCMV-TB40-E"
+    ucsc-defaultPos: "KF297339.1:1-237683"
+
+spikein:
+  spodoptera:
     accession: "GCF_023101765.2"
     genome_name: "spodoptera"
     pattern_match: "Spodoptera"
 
-fastq_sample:
-
-genomes_to_extact: 
-  - cmv 
-  - human
+#########################################
+### Config for processing fastq files ###
+#########################################
 
 fastq:
   directory: "data/fastq/"
+
+####################################################
+### Config for aligning fastq files with Bowtie2 ###
+####################################################
 
 bowtie2:
   index: "data/genome/human_tb40E_spodoptera_combined_genome" # reference genome
@@ -34,7 +42,31 @@ bowtie2:
   paired_options: "--fr --no-discordant" # options for paired end alignment
   additional_params: ""  # additional bowtie2 parameters 
 
+###########################################################
+### Config for creating bed, bedgraph, and bigwig files ###
+###########################################################
+
+# TODO: configuration for normal
+
+genomes_to_extact: 
+  - cmv 
+  - human
+
 create_track:
   track_type: "bw" # choose bw for bigwig or bg for bedgraph
   binsize: 1 # size of bedgraph bins
   bedgraph_definition_line: "track type=bedGraph"
+
+##########################################
+### Config for creating UCSC track hub ###
+##########################################
+
+ucsc:
+    project_name: myData
+    email: arya-zandvakili@uiowa.edu 
+
+####################################################
+### Sample data configuration for testing script ###
+####################################################
+
+fastq_sample:

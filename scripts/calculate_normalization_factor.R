@@ -3,7 +3,8 @@ library(tidyr)
 
 # Read file
 args <- commandArgs(TRUE)
-mapped_reads <- read.delim(args[1], sep = "\t")
+read_depth_file = args[1]
+mapped_reads <- read.delim(read_depth_file, sep = "\t")
 
 # Reformat table, 1 row per sample
 mapped_reads <- mapped_reads |> 
@@ -13,8 +14,14 @@ mapped_reads <- mapped_reads |>
   select(-Extra) |> 
   pivot_wider(id_cols = "Sample", 
               names_from = "Organism", 
-              values_from = "num_mapped_pairs") |> 
-  mutate(total = cmv + human + spikein)
+              values_from = "num_mapped_pairs")
+
+# Rename last column 'spikein'
+names(mapped_reads)[ncol(mapped_reads)] <- "spikein"
+
+# Calculate the sum of mapped reads for each sample
+mapped_reads <- mapped_reads |> 
+  mutate(total = rowSums(across(-Sample)))
 
 # Calculate library Size Normalization
 average_mapped_library_size = mean(mapped_reads$total)
@@ -31,4 +38,4 @@ mapped_reads <- mapped_reads |>
   mutate(total_correction = libsize_correction*spikein_correction)
 
 # Save file
-write.table(mapped_reads, file = args[1], sep = "\t", row.names = F)
+write.table(mapped_reads, file = read_depth_file, sep = "\t", row.names = F)
