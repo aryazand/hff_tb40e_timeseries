@@ -1,0 +1,5 @@
+filename,sample_name,direction
+sample1_1.fastq,sample1,R1
+sample1_2.fastq,sample1,R2
+sample2_1.fastq,sample2,R1
+sample2_2.fastq,sample2,R2
