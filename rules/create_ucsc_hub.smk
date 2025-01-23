@@ -34,6 +34,8 @@ rule create_trackdb:
         trackdb_file = "results/UCSCGenomeBrowser/{species}/{genome}/trackDb.txt"
     log:
         "log/create_trackdb_{species}_{genome}.log"
+    params:
+        bw_folder = "../../../tracks/"
     run:
         # create trackdb file
         with open(output.trackdb_file, 'w') as tf:
@@ -75,7 +77,7 @@ rule create_trackdb:
                     '\tparent {}'.format(sample),
                     '\tshortLabel {}_forwrad'.format(sample),
                     '\tlongLabel {}_forward'.format(sample),
-                    '\tbigDataUrl bw/{}_for.bw'.format(sample + "_" + wildcards.species),
+                    '\tbigDataUrl {}_for.bw'.format(params.bw_folder + sample + "_" + wildcards.species),
                     '\ttype bigWig',
                     '\tcolor 113,35,124',
                     '\taltColor 113,35,124',
@@ -85,7 +87,7 @@ rule create_trackdb:
                     '\tparent {}'.format(sample),
                     '\tshortLabel {}_reverse'.format(sample),
                     '\tlongLabel {}_reverse'.format(sample),
-                    '\tbigDataUrl bw/{}_rev.bw'.format(sample + "_" + wildcards.species),
+                    '\tbigDataUrl {}_rev.bw'.format(params.bw_folder + sample + "_" + wildcards.species),
                     '\ttype bigWig',
                     '\tnegateValues on',
                     '\tcolor 242,157,228', 
@@ -97,8 +99,8 @@ rule create_trackdb:
                     'type bigWig',
                     'aggregate transparentOverlay',
                     'showSubtrackColorOnUi on',
-                    'shortLabel {}'.format(sample),
-                    'longLabel {}'.format(sample),
+                    'shortLabel {}'.format(sample + " fiveprime"),
+                    'longLabel {}'.format(sample + " fiveprime"),
                     'visibility full',
                     'autoScale group',
                     'maxHeightPixels 100:50:8',
@@ -109,7 +111,7 @@ rule create_trackdb:
                     '\tparent {}_fiveprime'.format(sample),
                     '\tshortLabel {}_fiveprime_forward'.format(sample),
                     '\tlongLabel {}_fiveprime_forward'.format(sample),
-                    '\tbigDataUrl bw/{}_for.fiveprime.bw'.format(sample + "_" + wildcards.species),
+                    '\tbigDataUrl {}_for.fiveprime.bw'.format(params.bw_folder + sample + "_" + wildcards.species),
                     '\ttype bigWig',
                     '\tcolor 113,35,124',
                     '\taltColor 113,35,124',
@@ -119,7 +121,7 @@ rule create_trackdb:
                     '\tparent {}_fiveprime'.format(sample),
                     '\tshortLabel {}_fiveprime_reverse'.format(sample),
                     '\tlongLabel {}_fiveprime_reverse'.format(sample),
-                    '\tbigDataUrl bw/{}_rev.fiveprime.bw'.format(sample + "_" + wildcards.species),
+                    '\tbigDataUrl {}_rev.fiveprime.bw'.format(params.bw_folder + sample + "_" + wildcards.species),
                     '\ttype bigWig',
                     '\tnegateValues on',
                     '\tcolor 242,157,228', 

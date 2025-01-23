@@ -26,7 +26,7 @@ priority 2
 	parent sample2
 	shortLabel sample2_forwrad
 	longLabel sample2_forward
-	bigDataUrl bw/sample2_cmv_for.bw
+	bigDataUrl ../../../tracks/sample2_cmv_for.bw
 	type bigWig
 	color 113,35,124
 	altColor 113,35,124
@@ -36,7 +36,7 @@ priority 2
 	parent sample2
 	shortLabel sample2_reverse
 	longLabel sample2_reverse
-	bigDataUrl sample2_cmv_rev.bw
+	bigDataUrl ../../../tracks/sample2_cmv_rev.bw
 	type bigWig
 	negateValues on
 	color 242,157,228
@@ -48,8 +48,8 @@ container multiWig
 type bigWig
 aggregate transparentOverlay
 showSubtrackColorOnUi on
-shortLabel sample2
-longLabel sample2
+shortLabel sample2 fiveprime
+longLabel sample2 fiveprime
 visibility full
 autoScale group
 maxHeightPixels 100:50:8
@@ -60,7 +60,7 @@ priority 2
 	parent sample2_fiveprime
 	shortLabel sample2_fiveprime_forward
 	longLabel sample2_fiveprime_forward
-	bigDataUrl bw/sample2_cmv_for.fiveprime.bw
+	bigDataUrl ../../../tracks/sample2_cmv_for.fiveprime.bw
 	type bigWig
 	color 113,35,124
 	altColor 113,35,124
@@ -70,7 +70,7 @@ priority 2
 	parent sample2_fiveprime
 	shortLabel sample2_fiveprime_reverse
 	longLabel sample2_fiveprime_reverse
-	bigDataUrl bw/sample2_cmv_rev.fiveprime.bw
+	bigDataUrl ../../../tracks/sample2_cmv_rev.fiveprime.bw
 	type bigWig
 	negateValues on
 	color 242,157,228
@@ -96,7 +96,7 @@ priority 2
 	parent sample1
 	shortLabel sample1_forwrad
 	longLabel sample1_forward
-	bigDataUrl bw/sample1_cmv_for.bw
+	bigDataUrl ../../../tracks/sample1_cmv_for.bw
 	type bigWig
 	color 113,35,124
 	altColor 113,35,124
@@ -106,7 +106,7 @@ priority 2
 	parent sample1
 	shortLabel sample1_reverse
 	longLabel sample1_reverse
-	bigDataUrl bw/sample1_cmv_rev.bw
+	bigDataUrl ../../../tracks/sample1_cmv_rev.bw
 	type bigWig
 	negateValues on
 	color 242,157,228
@@ -118,8 +118,8 @@ container multiWig
 type bigWig
 aggregate transparentOverlay
 showSubtrackColorOnUi on
-shortLabel sample1
-longLabel sample1
+shortLabel sample1 fiveprime
+longLabel sample1 fiveprime
 visibility full
 autoScale group
 maxHeightPixels 100:50:8
@@ -130,7 +130,7 @@ priority 2
 	parent sample1_fiveprime
 	shortLabel sample1_fiveprime_forward
 	longLabel sample1_fiveprime_forward
-	bigDataUrl bw/sample1_cmv_for.fiveprime.bw
+	bigDataUrl ../../../tracks/sample1_cmv_for.fiveprime.bw
 	type bigWig
 	color 113,35,124
 	altColor 113,35,124
@@ -140,7 +140,7 @@ priority 2
 	parent sample1_fiveprime
 	shortLabel sample1_fiveprime_reverse
 	longLabel sample1_fiveprime_reverse
-	bigDataUrl bw/sample1_cmv_rev.fiveprime.bw
+	bigDataUrl ../../../tracks/sample1_cmv_rev.fiveprime.bw
 	type bigWig
 	negateValues on
 	color 242,157,228
