@@ -7,7 +7,12 @@
 !/data/genome
 !/data/genome/genome_download.sh
 /log/
-/results/
+/results/**
+!/results/UCSCGenomeBrowser/
+!/results/UCSCGenomeBrowser/cmv/
+!/results/UCSCGenomeBrowser/cmv/**/*
+!/results/tracks/
+!/results/tracks/*_cmv_*.bw
 /processed_data/
 /.snakemake/
 /container.sif
