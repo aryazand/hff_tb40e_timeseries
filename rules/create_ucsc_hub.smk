@@ -205,11 +205,11 @@ rule create_url:
         git_origin=$(git remote get-url origin | sed 's/\.git$//g')
         github_raw=$(echo $git_origin | sed 's/github.com/raw.githubusercontent.com/g')
 
-        sed -i '/^## Url to UCSC Trackhub/,/^##/{{/^#/!d}}' README.md
+        sed -i '/^## UCSC Trackhub/,/^##/{{/^#/!d}}' README.md
 
         for species in {params.species}; do
             hub_url="$github_raw/{params.main_folder}/{params.browser_folder}/$species/hub.txt"
             genome=$(head -n 1 results/UCSCGenomeBrowser/$species/genomes.txt | cut -d ' ' -f 2)
-            sed -i "/## Url to UCSC Trackhub/a $species trackhub: <{params.ucsc_baseurl}?genome=$genome&hubUrl=$hub_url>\\n" README.md 
+            sed -i "/## UCSC Trackhub/a $species trackhub: <{params.ucsc_baseurl}?genome=$genome&hubUrl=$hub_url>\\n" README.md 
         done
         """
