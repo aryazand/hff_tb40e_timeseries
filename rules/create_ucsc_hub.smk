@@ -202,7 +202,7 @@ rule create_url:
         ucsc_baseurl = "https://genome.ucsc.edu/cgi-bin/hgTracks"
     shell:
         """
-        git_origin=$(git remote get-url origin)
+        git_origin=$(git remote get-url origin | sed 's/\.git$//g')
         github_raw=$(echo $git_origin | sed 's/github.com/raw.githubusercontent.com/g')
 
         sed -i '/^## Url to UCSC Trackhub/,/^##/{{/^#/!d}}' README.md
