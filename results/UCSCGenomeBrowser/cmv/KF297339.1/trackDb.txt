@@ -9,76 +9,6 @@ visibility pack
 
 ##############################################
 
-track sample2
-container multiWig
-type bigWig
-aggregate transparentOverlay
-showSubtrackColorOnUi on
-shortLabel sample2
-longLabel sample2
-visibility full
-autoScale group
-maxHeightPixels 100:50:8
-type bigWig
-priority 2
-
-	track sample2_for
-	parent sample2
-	shortLabel sample2_forwrad
-	longLabel sample2_forward
-	bigDataUrl ../../../tracks/sample2_cmv_for.bw
-	type bigWig
-	color 113,35,124
-	altColor 113,35,124
-	priority 2.1
-
-	track sample2_rev
-	parent sample2
-	shortLabel sample2_reverse
-	longLabel sample2_reverse
-	bigDataUrl ../../../tracks/sample2_cmv_rev.bw
-	type bigWig
-	negateValues on
-	color 242,157,228
-	altColor 242,157,228
-	priority 2.2
-
-track sample2_fiveprime
-container multiWig
-type bigWig
-aggregate transparentOverlay
-showSubtrackColorOnUi on
-shortLabel sample2 fiveprime
-longLabel sample2 fiveprime
-visibility full
-autoScale group
-maxHeightPixels 100:50:8
-type bigWig
-priority 2
-
-	track sample2_fiveprime_for
-	parent sample2_fiveprime
-	shortLabel sample2_fiveprime_forward
-	longLabel sample2_fiveprime_forward
-	bigDataUrl ../../../tracks/sample2_cmv_for.fiveprime.bw
-	type bigWig
-	color 113,35,124
-	altColor 113,35,124
-	priority 2.1
-
-	track sample2_fiveprime_rev
-	parent sample2_fiveprime
-	shortLabel sample2_fiveprime_reverse
-	longLabel sample2_fiveprime_reverse
-	bigDataUrl ../../../tracks/sample2_cmv_rev.fiveprime.bw
-	type bigWig
-	negateValues on
-	color 242,157,228
-	altColor 242,157,228
-	priority 2.2
-
-##############################################
-
 track sample1
 container multiWig
 type bigWig
@@ -141,6 +71,76 @@ priority 2
 	shortLabel sample1_fiveprime_reverse
 	longLabel sample1_fiveprime_reverse
 	bigDataUrl ../../../tracks/sample1_cmv_rev.fiveprime.bw
+	type bigWig
+	negateValues on
+	color 242,157,228
+	altColor 242,157,228
+	priority 2.2
+
+##############################################
+
+track sample2
+container multiWig
+type bigWig
+aggregate transparentOverlay
+showSubtrackColorOnUi on
+shortLabel sample2
+longLabel sample2
+visibility full
+autoScale group
+maxHeightPixels 100:50:8
+type bigWig
+priority 2
+
+	track sample2_for
+	parent sample2
+	shortLabel sample2_forwrad
+	longLabel sample2_forward
+	bigDataUrl ../../../tracks/sample2_cmv_for.bw
+	type bigWig
+	color 113,35,124
+	altColor 113,35,124
+	priority 2.1
+
+	track sample2_rev
+	parent sample2
+	shortLabel sample2_reverse
+	longLabel sample2_reverse
+	bigDataUrl ../../../tracks/sample2_cmv_rev.bw
+	type bigWig
+	negateValues on
+	color 242,157,228
+	altColor 242,157,228
+	priority 2.2
+
+track sample2_fiveprime
+container multiWig
+type bigWig
+aggregate transparentOverlay
+showSubtrackColorOnUi on
+shortLabel sample2 fiveprime
+longLabel sample2 fiveprime
+visibility full
+autoScale group
+maxHeightPixels 100:50:8
+type bigWig
+priority 2
+
+	track sample2_fiveprime_for
+	parent sample2_fiveprime
+	shortLabel sample2_fiveprime_forward
+	longLabel sample2_fiveprime_forward
+	bigDataUrl ../../../tracks/sample2_cmv_for.fiveprime.bw
+	type bigWig
+	color 113,35,124
+	altColor 113,35,124
+	priority 2.1
+
+	track sample2_fiveprime_rev
+	parent sample2_fiveprime
+	shortLabel sample2_fiveprime_reverse
+	longLabel sample2_fiveprime_reverse
+	bigDataUrl ../../../tracks/sample2_cmv_rev.fiveprime.bw
 	type bigWig
 	negateValues on
 	color 242,157,228

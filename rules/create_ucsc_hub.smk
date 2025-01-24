@@ -3,6 +3,9 @@
 ##################
 
 rule create_bigwig_symlinks:
+    # create symlinks for bigwig files to contain all UCSC Trackhub files in the same folder
+    # However, symlinks do not seem to work when the trackhub is uploaded to github
+    # Therefore, this rule is not used in the current pipeline
     input:
         bw = "results/tracks/{sample}_{species}_{direction}.{ext}",
         gff3 = "data/genome/{species}/{genome}.gff"
@@ -23,10 +26,10 @@ rule create_trackdb:
     # prepare a UCSC genome browser trackdb.txt file
     # TODO: add track colors
     input:
-        samples = expand("results/UCSCGenomeBrowser/{{species}}/{{genome}}/bw/{sample}_{{species}}_{direction}.bw", 
+        samples = expand("results/tracks/{sample}_{{species}}_{direction}.bw", 
                     sample = sample_names, 
                     direction = ['rev', 'for']),
-        fiveprime_samples = expand("results/UCSCGenomeBrowser/{{species}}/{{genome}}/bw/{sample}_{{species}}_{direction}.fiveprime.bw", 
+        fiveprime_samples = expand("results/tracks/{sample}_{{species}}_{direction}.fiveprime.bw", 
                     sample = sample_names, 
                     direction = ['rev', 'for']),
         bigbed = lambda wc: "results/UCSCGenomeBrowser/{species}/{genome}/{genome}.bb"
