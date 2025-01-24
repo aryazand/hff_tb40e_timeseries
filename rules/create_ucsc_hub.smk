@@ -186,9 +186,30 @@ rule create_genometxt:
 
 rule hubcheck:
     # use hubCheck to validate the hub
-    input:
+    params:
         hub = expand("results/UCSCGenomeBrowser/{species}/hub.txt", species = config["genomes"].keys())
     conda:
         "../envs/ucsc_hubcheck.yml"
     shell:
-        "hubCheck {input.hub}"
+        "hubCheck {params.hub}"
+
+rule create_url: 
+    # create a URL to the UCSC Genome Browser hub
+    params:
+        browser_folder = "results/UCSCGenomeBrowser", 
+        species = list(config["genomes"].keys()),
+        main_folder = "refs/heads/main",
+        ucsc_baseurl = "https://genome.ucsc.edu/cgi-bin/hgTracks"
+    shell:
+        """
+        git_origin=$(git remote get-url origin)
+        github_raw=$(echo $git_origin | sed 's/github.com/raw.githubusercontent.com/g')
+
+        sed -i '/^## Url to UCSC Trackhub/,/^##/{{/^#/!d}}' README.md
+
+        for species in {params.species}; do
+            hub_url="$github_raw/{params.main_folder}/{params.browser_folder}/$species/hub.txt"
+            genome=$(head -n 1 results/UCSCGenomeBrowser/$species/genomes.txt | cut -d ' ' -f 2)
+            sed -i "/## Url to UCSC Trackhub/a $species trackhub: []({params.ucsc_baseurl}?genome=$genome&hubUrl=$hub_url)\\n" README.md 
+        done
+        """
