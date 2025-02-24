@@ -1,7 +1,19 @@
-# proseq_pipeline
-A custom pipeline to analyze proseq data
+# Identifying clusters of transcription start regions in cytomegalovirus genome with similiar activation patterns 
 
-## How to make apptainer image from container.def file
+Here we will analyze nascent RNA via PRO-seq at different timepoints of cytomegalovirus (CMV) infection of fibroblasts to identifying transcription start regions (TSRs) that follow similar activation patterns. We will analyze the PRO-seq dataset is hosted on NCBI GEO GSE185763, which is associated with publication doi: 10.3390/v14040779.
+
+## Introduction
+TODO: Add details
+
+## Description of data
+Human foreskin fibroblast were infected with cytomegalovirus and PRO-seq was performed with and without flavopriridol at 0, 4, 12, 24, 48, and 72 hours post-infection. 
+
+TODO: Add more description 
+
+
+## Reproducing this pipeline
+
+### How to make apptainer image from container.def file
 The container.def file was made as follows, which requires snakemake and spython to generate. It takes all of conda environment files to build a container definition file
 
 ```
@@ -18,9 +30,3 @@ apptainer build container.sif container.def
 ## UCSC Trackhub
 cmv trackhub: <https://genome.ucsc.edu/cgi-bin/hgTracks?genome=KF297339.1&hubUrl=https://raw.githubusercontent.com/aryazand/proseq_pipeline/refs/heads/main/results/UCSCGenomeBrowser/cmv/hub.txt>
 
-human trackhub: <https://genome.ucsc.edu/cgi-bin/hgTracks?genome=GRCh38&hubUrl=https://raw.githubusercontent.com/aryazand/proseq_pipeline/refs/heads/main/results/UCSCGenomeBrowser/human/hub.txt>
-
-## TO DO
-1. create recipe to download genomes 
-2. create recipe to download fastq 
-3. create recipe to get chrom.size data. Ensure chromosome names match UCSC bedgraphtobigwig  

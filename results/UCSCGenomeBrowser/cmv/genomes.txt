@@ -1,6 +1,0 @@
-genome KF297339.1
-description HCMV-TB40-E
-trackDb KF297339.1/trackDb.txt
-twoBitPath KF297339.1/sequence.2bit
-organism cmv
-defaultPos KF297339.1:1-237683
