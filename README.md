@@ -1,4 +1,4 @@
-# Identifying clusters of transcription start regions in cytomegalovirus genome with similiar activation patterns 
+# Identifying clusters of transcription start regions in the cytomegalovirus genome with similiar activation patterns 
 
 Here we will analyze nascent RNA via PRO-seq at different timepoints of cytomegalovirus (CMV) infection of fibroblasts to identifying transcription start regions (TSRs) that follow similar activation patterns. We will analyze the PRO-seq dataset is hosted on NCBI GEO GSE185763, which is associated with publication doi: 10.3390/v14040779.
 
