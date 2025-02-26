@@ -27,6 +27,4 @@ To then create an apptainer image, we use the following:
 apptainer build container.sif container.def 
 ```
 
-## UCSC Trackhub
-cmv trackhub: <https://genome.ucsc.edu/cgi-bin/hgTracks?genome=KF297339.1&hubUrl=https://raw.githubusercontent.com/aryazand/proseq_pipeline/refs/heads/main/results/UCSCGenomeBrowser/cmv/hub.txt>
 
