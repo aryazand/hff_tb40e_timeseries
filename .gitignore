@@ -6,6 +6,7 @@
 !/data/fastq/sample2_2.fastq
 !/data/genome
 !/data/genome/genome_download.sh
+!/data/README.md
 /log/
 /results/**
 !/results/UCSCGenomeBrowser/
