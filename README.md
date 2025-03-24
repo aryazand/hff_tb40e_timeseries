@@ -68,11 +68,15 @@ Create a bed file of just the 5' ends of each mapped read to identify (putative)
 
 Unfortunately many of these software, including `TSRFinder` and `iTiSS,` are not well-established packages and are not suited for including into snakemake pipeline (e.g. expect software dependencies to be in certain location). I am in the process of creating an R-package (<https://github.com/aryazand/tsrDetectR>) that implements these algorithms. The package will allow me easily determine how much my results change dependent on the algorithm used. It does however have a start-up cost because I'm not experienced in created in R-packages.
 
-#### C. Cluster TSRs based on temporal expression pattern and determine if they are follow the canonical model of CMV gene expression
+**C. Score TSRs**
 
-First, normalize the "signal" of TSSs within the identified TSRs using amount of reads aligned to spike-in moth genome and total number of aligned reads. Second
+First, normalize the "signal" of TSSs within the identified TSRs using amount of reads aligned to spike-in moth genome and total number of aligned reads.
 
-Second, use hierarchical clustering to cluster TSRs that follow similar temporal gene expression pattern in `R`. Use known IE, Early, and Late genes as comparators to determine if any of the clusters TSRs follow IE, Early, or Late gene expression patterns. *I haven't determined how I will quantify similarity of a TSR (or cluster of TSRs) to a typical IE, Early, or Late gene (or perform statistical testing).*
+Second, TSRs can be scored by either (1) the number of 5' ends at the peak of the TSR ("maxTSS") or (2) the mean of 5' ends mapped within the entire TSR ("meanTSS"). The median 5' ends mapping to a window surrounding the TSR can be used to identify a background level of 5' end mapping, which can then be subtracted from either the maxTSS or meanTSS scores.
+
+#### D. Cluster TSRs based on temporal expression pattern and determine if they are follow the canonical model of CMV gene expression
+
+Use hierarchical clustering to cluster TSRs that follow similar temporal pattern in TSR score over time. Use the promoters (i.e. TSRs) of known IE, Early, and Late genes as comparators to determine if any of the clusters TSRs follow IE, Early, or Late gene expression patterns. *I haven't determined how I will quantify similarity of a TSR (or cluster of TSRs) to a typical IE, Early, or Late gene (or perform statistical testing).*
 
 ## Appendix: Reproducing this pipeline
 
