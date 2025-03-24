@@ -27,3 +27,5 @@
 /.java
 /dag.svg
 .DS_Store
+*.pdf
+*.png
