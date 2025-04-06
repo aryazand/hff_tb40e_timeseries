@@ -2,7 +2,7 @@
 
 name: GSE185762
 pep_version: 2.1.0
-sample_table: GSE185762_PEP_raw.csv
+sample_table: PEP_raw.csv
 
 "experiment_metadata":
   "series_contact_address": "500 Newton Road, 260 EMRB"
@@ -47,7 +47,7 @@ sample_table: GSE185762_PEP_raw.csv
     \ with surrounding chromatin on human and cytomegalovirus genomes [Pro-seq]"
   "series_type": "Expression profiling by high throughput sequencing"
 
-subsample_table: GSE185762_PEP_raw_subtable.csv
+subsample_table: PEP_raw_subtable.csv
 
 sample_modifiers:
   append:
@@ -58,31 +58,9 @@ sample_modifiers:
     sample_data_processing: "Adapter trimming using trim_galore 0.6., Alignment of trimmed reads to hg38, and HCMV (TB40e KF297339.1) using bowtie 1.2.2., Deduplication of fragments based on their unique molecular index tags using awk and bash., Conversion of deduped bed files into bedGraph and bigwig using bedtools genomecov and kentUtils bedGraphToBigWig programs."
     supplementary_files_format_and_content: "bigwig files containing pileup of DFF ChIP-Seq fragments across whole genomes."
     # End of project metadata
-    host_species: "Homo sapiens"
-    virus_species: "cytomegalovirus"
-    spikein_species: "Spodoptera frugiperda"
-  imply:
-    - if:
-        host_species: "Homo sapiens"
-      then: 
-        host_genbank_accession: "GCF_000001405.40"
-        host_genome_name: "hg38"
-        host_pattern_match: "Homo_sapiens"
-        host_shortlabel: "human hg38"
-        host_longlabel: "Annotated hg38 genome"
-        host_ucsc-defaultPos: "chr1:1-10000"
-    - if:
-        virus_species: "cytomegalovirus"
-      then: 
-        virus_genbank_accession: "GCA_027926625.1" 
-        virus_genome_name: "KF297339.1"
-        virus_pattern_match: "KF297339.1"
-        virus_shortlabel: "HCMV-TB40-E"
-        virus_longlabel: "Annotated CDS for HCMV strain TB40-E (KF297339.1)"
-        virus_ucsc-defaultPos: "KF297339.1:1-237683"
-    - if: 
-        spikein_species: "Spodoptera frugiperda"
-      then:
-        spikein_genbank_accession: "GCF_023101765.2"
-        spikein_genome_name: "spodoptera"
-        spikein_pattern_match: "Spodoptera"
+    host_genbank_accession: "GCF_000001405.40"
+    virus_genbank_accession: "GCA_027926625.1"
+    spikein_genbank_accession: "GCF_023101765.2"
+    host_genome_name: "hg38"
+    virus_genome_name: "cmv_tb40e"
+    spikein_genome_name: "spodoptera"
