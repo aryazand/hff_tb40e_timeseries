@@ -9,6 +9,8 @@
 !/results/UCSCGenomeBrowser/cmv/**/*
 !/results/tracks/
 !/results/tracks/*_cmv_*.bw
+!/results/tsrs/
+!/results/tsrs/*
 /processed_data/
 /.snakemake/
 /container.sif
