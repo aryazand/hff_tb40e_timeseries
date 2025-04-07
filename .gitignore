@@ -2,6 +2,7 @@
 !/data/README.md
 !/data/sample_metadata/
 !/data/sample_metadata/*
+!/data/KF297339.1.gff3
 /log/
 /results/**
 !/results/UCSCGenomeBrowser/
