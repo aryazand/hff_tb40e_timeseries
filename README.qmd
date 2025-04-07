@@ -1,0 +1,272 @@
+---
+bibliography: references.bib
+format: gfm
+---
+
+# Identifying clusters of transcription start regions with similar activation patterns in the cytomegalovirus genome
+
+**Author: Arya Zandvakili**
+
+## Introduction
+
+Cytomegalovirus (CMV) is a beta herpesvirus that infects majority of individuals by age 40 (\~50-80% of individuals aged greater than 40 depending on socioeconomic factors[@colugnati2007]) typically causing mild or no symptoms. After initial infection, CMV remains latent within cells (as extra-chromosomal DNA known as "episome") for a person's lifespan. While nearly any cell type can be infected, cells of the myeloid lineage are the primary reservoir for latency. Reactivation of latent CMV in immunosuppressed individuals (e.g. AIDS, post-transplant, chemotherapy) can result in severe infections, such as encephalitis, ocular infections, pneumonitis, and colitis. In transplanted individuals, re-activation can result in loss of transplanted organ.
+
+After a cell is infected by CMV, viral genes expression follows a cascade (times based on results from fibroblast cultures)
+
+1.  *Immediate Early* (IE): Genes expressed prior to *de novo* viral protein synthesis (transcribed \< 4 hours post-infection, hpi)
+
+2.  *Early*: Genes that are only expressed after viral protein synthesis initiates, but before viral DNA replication (transcribed \~4-17 hrs hpi)
+
+3.  *Late*: Genes that are only expressed after viral DNA expression (\~48 hrs hpi)
+
+While this pattern of expression is well-established at the level of protein and stable RNA, it is unknown if all transcriptional start regions (TSRs) of the genome have transcriptional activity that can be categorized into “neat” buckets of "IE", "Early" and "Late". TSRs encompass all regions of the genome that can initiate transcription (not just promoters of protein-coding gene), such as areas of the genome producing non-coding RNA or unstable RNA species (e.g. enhancer RNA). Understanding how transcription is regulated from the CMV genome may not only provide insights to biology of CMV, but may help inform therapeutics.
+
+Here we will use nascent RNA sequencing (Precision Run-On sequencing, PRO-seq) at different time points of CMV infection in cultured human foreskin fibroblasts (HFF) to test the hypothesis that transcription globally from the CMV genome follows the canonical model of IE, Early and Late expression. Additionally, I aim to identify clusters of TSRs that follow similar expression patterns, as this will allow futures studies to determine whether the TSRs in each cluster are regulated by a common mechanism.
+
+### Introduction PRO-seq
+
+PRO-seq is a nascent RNA-sequencing method. It allows for capture and sequencing RNA molecules that are in the process of being synthesized by RNA polymerase. Briefly, the PRO-seq method exposes cells to biotinylated nucleotides which are then incorporated into nascent RNA strands and resulting in termination of RNA elongation[@mimoso2023]. The biotinylated nucleotides are then isolated with streptavidin pull down to then be sequenced. PRO-seq differs from standard RNA-seq in 3 important ways: (1) PRO-seq sequences both stable RNA species (e.g. nascent RNA that will eventually become mRNA) but also unstable RNA species (e.g. enhancer RNA); while RNA-seq only sequences stable RNA species. (2) With RNA-seq the quantify of any RNA species depends on numerous processes affecting RNA production, processing, and degradation; while PRO-seq the quantity of an RNA species is primarily dependent of transcription. Thus, PRO-seq is a better measure of transcriptional activity than RNA-seq. (3) With PRO-seq, the 5' end of the captured RNA molecules represent the transcription start site (TSS); while with RNA-seq the 5' end RNA molecules may not represent the TSS due to RNA processing. For these reasons, PRO-seq is a attractive method for quantifying transcriptional activity across the CMV genome.
+
+## Target Figure
+
+Below is a mock-up of the figure I'd like to produce. It gives an example of what I'd expect if transcriptional activity throughout the genome strongly adhered the canonical model of IE, Early and Late expression. If global transcriptional activity doesn't follow the canonical model we may expect other gene expressions patterns (e.g. areas of the genome producing high levels of activity throughout infection or high levels of expression in 2 time periods).
+
+![](figure_example.png)
+
+## Materials and Methods
+
+### A. Production of Raw Data
+
+I will be using the previously published PRO-seq dataset produced by our lab [@ball2022]. This dataset is derived from *in vitro* infection of HFFs with CMV and then PRO-seq being performed at 0, 4, 12-, 24-, 48-, and 72-hours post-infection. This is a model of active infection and not latency (as HFF do not harbor latent infection). Prior to isolating nascent RNA, a spike-in control of an equal number of moth (*Spodoptera*) cells was included with each sample. This allows for comparison expression across time-points at each TSR (i.e. to normalize for difference in read-depth between time points). After isolation of nascent RNA, unique molecular identifier (UMI) sequence adapters are ligated to the ends of the RNA, followed by reverse transcription to cDNA and amplification. cDNA was paired-end sequenced on an Illumina platform. Raw data is FASTQ files representing sequences of nascent RNA produced from CMV, human, and moth genomes.
+
+### B. Analysis Pipeline
+
+I am in the process of creating a snakemake pipeline to perform the following steps. To ensure reproducibility I will use conda environment for each snakemake rule and containerize the environments.
+
+#### 1. Process and Align FASTQ reads
+
+FASTQ will processed as follows: (1) the sequences are deduplicated based on UMI adapters (using `seqkit)`to remove amplification artifacts; (2) adapters will be trimmed (`trim_galore)`; and (3) any fastq fragment missing its pair will be eliminated (using `fastq_pair`). Reads will be aligned to a combined genome of cytomegalovirus, human, and moth genomes using `bowtie2`. These will then be converted to a BED file, with each line representing a fragment of nascent RNA.
+
+#### 2. Identify and Score TSRs
+
+The goal in this section is to create a table of the TSRs (i.e. in BED file format) for each timepoint of infection. The 5' end of each nascent RNA is considered to represent a transcription start site (TSS). There are many published algorithms to derive TSRs from TSSs; however, there is no gold-standard. For the purposes of this project, I will utilize the algorithm implemented in `TSRFinder` [@parida2019]. This algorithm analyzes every strand-specific window (size $w$) in the genome and the score of each window is equal to the number of TSSs at the center of the window. A window is called a TSR if it (1) meets a user-defined threshold score; and (2) does not overlap with a better scoring window. I am creating a R package called `TSRDetectR` that implements multiple TSR-identifying algorithms (<https://github.com/aryazand/tsrDetectR>). The above described algorithm is implemented as a function named `tsr_maxtss`.
+
+#### 3. Consolidate TSRs across timepoints
+
+TSRs are different times points may not be perfectly aligned with one another (e.g. the TSR for a gene may shift over time). Therefore, we will consider TSRs within a certain distance ($d$) of one another to be considered the same TSR. This will allow us to track how the score of a TSR changes over time. We will consolidate data into a table with columns representing timepoints, rows representing TSRs, and the value in each cell representing the score for each TSR-timepoint pair.
+
+#### 4. Cluster TSRs based on strength over time
+
+Using either a clustering algorithm (either K-means or hierarchical clustering) I will cluster TSRs based on how their strength changes over time. This will then be plotted as a heatmap.
+
+#### 5. Compare clusters activity of canonical genes
+
+I will use the promoters (i.e. TSRs) of known IE, Early, and Late genes as comparator to determine if any of the clusters TSRs follow IE, Early, or Late gene expression patterns. *I haven't determined how I will quantify similarity of a TSR (or cluster of TSRs) to a typical IE, Early, or Late gene (or perform statistical testing).*
+
+## Results & Exploratory Data Analysis
+
+Below I will perform an exploratory data analysis starting from aligned PRO-seq results (i.e. BED file produced at the end of step B1 above).
+
+#### Identify and Score TSRs
+
+```{r}
+#| eval: false 
+
+library(rtracklayer)
+library(tsrDetectR)
+
+# Create a function to identifying TSRs for each sample 
+get_tsr <- function(bed_file) {
+  
+  # Import bed file
+  x <- rtracklayer::import.bed(bed_file)
+  
+  # Get 5' end of each fragment
+  x.5prime <- GenomicRanges::resize(x, width = 1, fix = "start")
+  
+  # Get coverage across genome of 5' ends 
+  # The strand_coverage function is a wrapper around the GenomicRanges::coverage
+  # function that allows for strand specific coverage 
+  x.5primecov <- tsrDetectR::strand_coverage(x.5prime)
+  x.5primecov.plus <- x.5primecov[[1]][[1]]
+  x.5primecov.neg <- x.5primecov[[2]][[1]]
+  
+  # Call TSRs usings the `TSRFinder` based algorithm 
+  maxtss.windows.plus <- tsrDetectR::tsr_maxtss(x.5primecov.plus, w = 31, threshold = 50)
+  maxtss.windows.neg <- tsrDetectR::tsr_maxtss(x.5primecov.neg, w = 31, threshold = 50)
+  
+  # Create GRanges object to store TSRs 
+  gr.plus <- GenomicRanges::GRanges(
+    "KF297339.1", 
+    maxtss.windows.plus, 
+    strand="+",
+    seqinfo = x@seqinfo)
+  gr.neg <- GRanges(
+    "KF297339.1", 
+    maxtss.windows.neg, 
+    strand="-",
+    seqinfo = x@seqinfo)
+  gr <- c(gr.plus, gr.neg)
+  
+  # Only keep the center position of each TSR, as that's the only part that's necessary 
+  # for downstream analysis
+  TSRs <- GenomicRanges::resize(gr, width = 1, fix = "center")
+  
+  return(TSRs)
+}
+
+# Apply function to each bed file 
+bed_files <- list.files("results/bed/", full.names = T)
+tsrs <- purrr::map(bed_files, get_tsr)
+
+## Export TSRs as a BED file
+purrr::map2(
+  tsrs,
+  list("mock", "4hpi", "12hpi", "24hpi", "48hpi", "72hpi"),
+  ~rtracklayer::export.bed(.x, paste0("results/tsrs/", .y, ".bed")))
+```
+
+#### Consolidate TSRs across timepoints
+
+```{r}
+#| warning: false
+#| error: false 
+
+library(rtracklayer)
+library(tidyverse)
+
+# Load tsrs
+sample_names <- c("mock", "4hpi", "12hpi", "24hpi", "48hpi", "72hpi")
+tsr_files <- paste0("results/tsrs/",sample_names, ".bed")
+tsrs <- lapply(tsr_files, import.bed)
+tsrs <- GRangesList(tsrs)
+names(tsrs) <- sample_names
+
+# Combine peaks into a single GRanges
+tsrs_combined <- unlist(tsrs)
+tsrs_combined$sample <- factor(tsrs_combined@ranges@NAMES, levels = sample_names)
+tsrs_combined$id <- seq(length(tsrs_combined))
+mcols(tsrs_combined) <- mcols(tsrs_combined) |> 
+  data.frame() |> 
+  pivot_wider(id_cols = id, names_from = sample, values_from = score) |> 
+  select(all_of(sample_names))
+
+# consolidate peaks within 30 bp of each other as the same peak, this allows 
+# peaks accross timepoints that are slighlty shifted considered the "same" TSS
+tsrs_combined2 <- GenomicRanges::reduce(tsrs_combined, min.gapwidth = 30, with.revmap = T)
+
+revmap <- mcols(tsrs_combined2)$revmap
+mcols(tsrs_combined2) <- relist(tsrs_combined[unlist(revmap)], revmap) |> 
+  map(~mcols(.x) |> data.frame() |> summarise_all(sum, na.rm=T)) |> 
+  bind_rows() |> 
+  select(mock, 
+         `4hpi` = "X4hpi", 
+         `12hpi` = "X12hpi",
+         `24hpi` = "X24hpi", 
+         `48hpi` = "X48hpi",
+         `72hpi` = "X72hpi")
+
+tsrs_combined2
+```
+
+#### View scores
+
+```{r}
+mcols(tsrs_combined2) |> data.frame() |> as.matrix() |> summary()
+```
+
+The above summary reveals some important information:
+
+1.  The mock (non-infected) sample was contaminated with some CMV nascent RNA
+    -   **ACTION:** For each TSR, subtract the values of the mock infected from the other samples
+2.  The distributions above show that the score distributions is highly skewed (i.e. many TSRs have very low scores, while a few have very high scores)
+    -   **ACTION:** Remove known outlier TSRs
+3.  The scores increase over time (i.e. mean = 9.5 at 4hpi, compared to 623.2 at 72hpi). This may reflect the fact that at later time points (\>24hrs) the CMV genome has been replicated hundreds of times within each cell, thus there is a greater abundance nascent RNA at later timepoints
+    -   **ACTION:** Normalize the scores at each timepoint to the sum of all scores at the each time point to reflect the relative "strength" of the TSR compared to other regions of the genome
+
+##### Subtract values from mock infected
+
+```{r}
+tsrs_combined3 <- tsrs_combined2
+mcols(tsrs_combined3) <- mcols(tsrs_combined3) |> 
+  apply(2, function(.x) .x - tsrs_combined3$mock) |> 
+  apply(2, function(.x) replace(.x,.x < 0 , 0))
+
+# Remove mock
+mcols(tsrs_combined3) <- mcols(tsrs_combined3)[-1]
+```
+
+#####  Remove outliers 
+
+The CMV RNA 4.9 gene is known to have high-level of transcription across all time points, vastly out-numbering RNA produced by other loci. For instance, in our current dataset the TSR associated with RNA4.9 has a score of 966617, while the 99th percentile for score at the same timepoint is 8261 and the median score 125. This is an outlier that will disrupt comparison.
+
+The TSS of RNA 4.9 is located at position 94,733 on the +strand. There is also a highly active TSS associated with RNA 4.9 located at 94766 on the -strand.
+
+```{r}
+#| warning: false
+#| error: false 
+
+tsrs_combined3 <- tsrs_combined3[!(
+  tsrs_combined3@ranges@start == 94733 & 
+  tsrs_combined3@strand == "+")]
+
+tsrs_combined3 <- tsrs_combined3[!(
+  tsrs_combined3@ranges@start == 94766 & 
+  tsrs_combined3@strand == "-")]
+```
+
+##### Normalize scores 
+
+```{r}
+tsr_scores <- mcols(tsrs_combined3) |> data.frame() |> tibble()
+names(tsr_scores) <- sub("^X", "", names(tsr_scores))
+tsr_scores.normalized <- tsr_scores |> mutate_all(~100*.x/sum(.x))
+```
+
+#### Cluster TSRs based on strength over time
+
+Here we use the package ggalign to create a heatmap.
+
+```{r}
+#| warning: false
+#| error: false 
+library(ggalign)
+ggalign::ggheatmap(tsr_scores.normalized) +
+  scale_fill_gradientn(colours = terrain.colors(5)) +
+  anno_left() +
+  align_dendro(k = 5, method = "ward.D")
+```
+
+Despite our efforts, there is still significant skew in the data making visualization of variation in low scoring TSRs difficult to appreciate on a heatmap.
+
+```{r}
+tsr_scores.normalized |> as.matrix() |> summary()
+```
+
+To get a sense of the cluster, we will only analyze the top 100 scoring TSRs. This allows us to appreciate that there are some TSRs that peak in activity at 4 hpi, while some peak in activity at later time points. 
+
+```{r}
+#| warning: false
+#| error: false 
+#| 
+# Select top 100 scoring TSRs
+tsr_scores.normalized.top <- tsr_scores.normalized |> 
+  mutate(max.score = apply(tsr_scores.normalized,1, max)) |> 
+  top_n(100, max.score) |> 
+  select(-max.score)
+
+# Plot
+ggalign::ggheatmap(tsr_scores.normalized.top) +
+  scale_fill_gradientn(colours = terrain.colors(5)) +
+  anno_left() +
+  align_dendro(k = 5)
+```
+
+## Challenges & Next Steps
+
+1.  Determine how to handle the skewness in the data
+    -   Maybe a heatmap isn't the best way to represent the data, maybe line graphs will allow for better representation?
+2.  Decide on a clustering method
+3.  Determine how to comparing clusters to canonical IE, Early, and Late genes
+
+## References
