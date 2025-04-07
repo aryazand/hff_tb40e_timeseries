@@ -7,17 +7,11 @@ The files in the fastq folder are downloaded from NCBI SRA database. They repres
 
 | File                       | Description          | NCBI SRA Accession |
 |----------------------------|----------------------|--------------------|
-| fastq/SRR16301851.fastq.gz | Mock DMSO PRO-Seq    | SRR16301851        |
 | fastq/SRR16301852.fastq.gz | Mock Flavo PRO-Seq   | SRR16301852        |
-| fastq/SRR16301853.fastq.gz | 4 hpi DMSO PRO-Seq   | SRR16301853        |
 | fastq/SRR16301854.fastq.gz | 4 hpi Flavo PRO-Seq  | SRR16301854        |
-| fastq/SRR16301855.fastq.gz | 12 hpi DMSO PRO-Seq  | SRR16301855        |
 | fastq/SRR16301856.fastq.gz | 12 hpi Flavo PRO-Seq | SRR16301856        |
-| fastq/SRR16301857.fastq.gz | 24 hpi DMSO PRO-Seq  | SRR16301857        |
 | fastq/SRR16301858.fastq.gz | 24 hpi Flavo PRO-Seq | SRR16301858        |
-| fastq/SRR16301859.fastq.gz | 48 hpi DMSO PRO-Seq  | SRR16301859        |
 | fastq/SRR16301860.fastq.gz | 48 hpi Flavo PRO-Seq | SRR16301860        |
-| fastq/SRR16301861.fastq.gz | 72 hpi DMSO PRO-Seq  | SRR16301861        |
 | fastq/SRR16301862.fastq.gz | 72 hpi Flavo PRO-Seq | SRR16301862        |
 
 ## Genomes
