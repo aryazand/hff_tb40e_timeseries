@@ -2,7 +2,7 @@
 # Define Environment
 #########################
 
-
+import os
 import peppy
 from snakemake.utils import Paramspace
 
@@ -10,6 +10,17 @@ configfile: "config.yml"
 # containerized: "container.sif"
 
 include: "rules/common.smk"
+
+#############################
+# Define directories
+#############################
+
+RESULTS_DIR = config["results"]
+TRIMMED_DIR = os.path.join(RESULTS_DIR, "trimmed")
+DEDUPPED_DIR = os.path.join(RESULTS_DIR, "dedupped")
+ALIGNMENT_DIR = os.path.join(RESULTS_DIR, "alignments")
+LOGS_DIR = os.path.join(RESULTS_DIR, "logs")
+QC_DIR = os.path.join(RESULTS_DIR, "qc")
 
 #############################
 # Load samples and metadata
@@ -40,7 +51,9 @@ all_genomes_bam = expand("results/aligned_reads/{sample}_allgenomes.bam", sample
 
 rule all:
     input:
-        expand("data/fastq/{srr}_{direction}.fastq", srr = sample_table['srr'], direction = ['1', '2']),
+        expand(os.path.join(TRIMMED_DIR, "{sample}_{direction}_val_{direction}.fq.gz"), 
+            sample = sample_table.sample_name, 
+            direction = ['1', '2']),
 #         expand("results/aligned_reads/{sample}_{genome}.bam.bai", 
 #             sample = sample_names, 
 #             genome = ['allgenomes_sorted', 'cmv_extract', 'human_extract']),
@@ -53,7 +66,7 @@ rule all:
 #         "results/QC/multiqc/multiqc_report.html"
 
 include: "rules/get_fastq.smk"
-# include: "rules/process_fastq.smk"
+include: "rules/process_fastq.smk"
 # include: "rules/quality_control.smk"
 # include: "rules/align_reads.smk"
 # include: "rules/create_bed.smk"

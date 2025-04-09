@@ -1,9 +1,8 @@
-#########################################
-### Config for processing fastq files ###
-#########################################
+###################
+### Directories ###
+###################
 
-fastq:
-  directory: "data/fastq/"
+results: "results"
 
 ####################################################
 ### Config for aligning fastq files with Bowtie2 ###
