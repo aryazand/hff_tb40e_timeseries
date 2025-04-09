@@ -1,26 +1,21 @@
 rule download_genome:
     # download genome from NCBI
     output: 
-        fna = "data/genome/{species}/{genome}.fna",
-        gff = "data/genome/{species}/{genome}.gff"
+        fna = "data/genome/{species}/{accession}.fna",
+        gff = "data/genome/{species}/{accession}.gff"
     conda:
         "../envs/get-genome.yml"
     log:
-        "log/download_genome_{species}_{genome}.log",
-    wildcard_constraints:
-        species = "|".join(GENOMES.keys()),
-        genome = "|".join(GENOMES.values())
-    params:
-        accession = lambda wc: ACCESSION[wc.species]
+        "log/download_genome_{species}_{accession}.log",
     shell:
         """
-        datasets download genome accession {params.accession} --filename {wildcards.genome}.zip --include gff3,genome
-        unzip {wildcards.genome}.zip -d {wildcards.genome}
-        mv {wildcards.genome}/ncbi_dataset/data/{params.accession}/*.fna {output.fna}
-        mv {wildcards.genome}/ncbi_dataset/data/{params.accession}/*.gff {output.gff}
+        datasets download genome accession {wildcards.accession} --filename {wildcards.species}.zip --include gff3,genome
+        unzip {wildcards.species}.zip -d {wildcards.species}
+        mv {wildcards.species}/ncbi_dataset/data/{wildcards.accession}/*.fna {output.fna}
+        mv {wildcards.species}/ncbi_dataset/data/{wildcards.accession}/*.gff {output.gff}
         sed -i -re 's/(>\\S*)\\s.*/\\1/' {output.fna}
-        rm {wildcards.genome}.zip
-        rm -r {wildcards.genome}
+        rm {wildcards.species}.zip
+        rm -r {wildcards.species}
         """
 
 rule get_chrom_sizes:
@@ -37,6 +32,19 @@ rule get_chrom_sizes:
         """
         bioawk -cfastx '{{ print $name, length($seq) }}' {input} > {output}
         """
+
+rule concatenate_genomes:
+    input:
+        expand("data/genome/{species}/{genome}.fna", zip, species = GENOMES.keys(), genome = GENOMES.values())
+    output:
+        "data/genome/{combined_species_names}.fna"
+    log:
+        out = "log/concatenate_genomes_{combined_species_names}.out",
+        err = "log/concatenate_genomes_{combined_species_names}.err"
+    shell:
+        """
+        cat {input} | sed '/^>/ s/[[:space:]]/\\_/g' > {output}
+        """        
 
 rule gff3ToGenePred:
     # convert gff to genePred
@@ -102,22 +110,3 @@ rule create_2bit:
         """
         faToTwoBit {input.fasta} {output.twobit}
         """
-
-rule concatenate_genomes:
-    input:
-        expand("data/genome/{species}/{genome}.fna", zip,
-            species = GENOMES.keys(),
-            genome = GENOMES.values())
-    output:
-        "data/genome/{combined_species_names}.fna"
-    wildcard_constraints:
-        species = '|'.join(GENOMES.keys()),
-        genome = '|'.join(GENOMES.values()),
-        combined_species_names = '_'.join(GENOMES.keys()) 
-    log:
-        out = "log/concatenate_genomes_{combined_species_names}.out",
-        err = "log/concatenate_genomes_{combined_species_names}.err"
-    shell:
-        """
-        cat {input} | sed '/^>/ s/[[:space:]]/\\_/g' > {output}
-        """        

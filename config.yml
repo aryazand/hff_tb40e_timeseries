@@ -9,7 +9,6 @@ results: "results"
 ####################################################
 
 bowtie2:
-  index: "data/genome/human_tb40E_spodoptera_combined_genome" # reference genome
   umi_size: 8 # size of umi to trim from reads prior to align
   paired_options: "--fr --no-discordant" # options for paired end alignment
   additional_params: ""  # additional bowtie2 parameters 

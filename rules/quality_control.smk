@@ -1,25 +1,25 @@
 rule fastqc:
     input: 
-        "processed_data/fastq/{id}_R{direction}" + sample_ext
+        os.path.join(RAWFASTQ_DIR, "{sample}_{direction}.fastq.gz")
     output: 
-        "results/QC/fastqc/{id}_R{direction}_fastqc.html"
+        os.path.join(FASTQC_RAW_DIR, "{sample}_{direction}_fastqc.html")
     wildcard_constraints:
         direction = "[1-2]"
     conda:
         "../envs/proseq-qc.yml"
     threads: 5
     log:
-        out = "log/fastqc_{id}_{direction}.out",
-        err = "log/fastqc_{id}_{direction}.err"
+        out = "log/fastqc_{sample}_{direction}.out",
+        err = "log/fastqc_{sample}_{direction}.err"
     shell: 
-        "fastqc {input} -t {threads} -o results/QC/fastqc 2> {log.err} 1> {log.out}"
+        "fastqc {input} -t {threads} -o $(dirname {output}) 2> {log.err} 1> {log.out}"
 
 
 rule fastqc_on_processed_fastq:
     input: 
-        "processed_data/fastq/{sample}_R{direction}_processed.fastq.gz"
+        os.path.join(TRIMMED_DIR, "{sample}_{direction}_val_{direction}_umi.fq.gz")
     output: 
-        "results/QC/fastqc/{sample}_R{direction}_processed_fastqc.html"
+        os.path.join(FASTQC_PROCESSED_DIR, "{sample}_{direction}_val_{direction}_umi_fastqc.html")
     wildcard_constraints:
         direction = "[1-2]"
     conda:
@@ -29,22 +29,18 @@ rule fastqc_on_processed_fastq:
         out = "log/fastqc_{sample}_{direction}_processed.out",
         err = "log/fastqc_{sample}_{direction}_processed.err"
     shell: 
-        "fastqc {input} -t {threads} -o results/QC/fastqc 2> {log.err} 1> {log.out}"
+        "fastqc {input} -t {threads} -o $(dirname {output}) 2> {log.err} 1> {log.out}"
 
 rule run_multiqc:
     input:
-        expand("results/QC/alignment_reports/{sample}.txt", sample = sample_names),
-        expand("results/QC/trimming_reports/{sample}_{direction}{ext}_trimming_report.txt", sample = sample_names, direction = ["R1", "R2"], ext = sample_ext),
-        expand("results/QC/fastqc/{sample}_{direction}_fastqc.html", sample = sample_names, direction = ["R1", "R2"]),
-        expand("results/QC/fastqc/{sample}_{direction}_processed_fastqc.html", sample = sample_names, direction = ["R1", "R2"])
+        expand(os.path.join(FASTQC_RAW_DIR, "{sample}_{direction}_fastqc.html"), sample = sample_table["sample_name"], direction = ["1","2"]), 
+        expand(os.path.join(FASTQC_PROCESSED_DIR, "{sample}_{direction}_val_{direction}_umi_fastqc.html"), sample = sample_table["sample_name"], direction = ["1","2"]), 
     output:
-        "results/QC/multiqc/multiqc_report.html"
+        os.path.join(MULTIQC_DIR, "multiqc_report.html")
     conda:
         "../envs/proseq-qc.yml"
     log:
         out = "log/multiqc.out",
         err = "log/multiqc.err"
     shell:
-        "multiqc . --ignore '.snakemake/*' --outdir 'results/QC/multiqc' --force"
-
-
+        "multiqc . --ignore '.snakemake/*' --outdir $(dirname {output}) --force"

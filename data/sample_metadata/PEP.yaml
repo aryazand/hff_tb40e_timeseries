@@ -58,9 +58,5 @@ sample_modifiers:
     sample_data_processing: "Adapter trimming using trim_galore 0.6., Alignment of trimmed reads to hg38, and HCMV (TB40e KF297339.1) using bowtie 1.2.2., Deduplication of fragments based on their unique molecular index tags using awk and bash., Conversion of deduped bed files into bedGraph and bigwig using bedtools genomecov and kentUtils bedGraphToBigWig programs."
     supplementary_files_format_and_content: "bigwig files containing pileup of DFF ChIP-Seq fragments across whole genomes."
     # End of project metadata
-    host_genbank_accession: "GCF_000001405.40"
-    virus_genbank_accession: "GCA_027926625.1"
-    spikein_genbank_accession: "GCF_023101765.2"
-    host_genome_name: "hg38"
-    virus_genome_name: "cmv_tb40e"
-    spikein_genome_name: "spodoptera"
+    genome_names: "hg38, cmv_tb40e, spodoptera"
+    genome_accessions: "GCF_000001405.40, GCA_027926625.1, GCF_023101765.2"

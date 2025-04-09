@@ -1,52 +1,50 @@
 rule create_bowtie2_index:
     input: 
-        "data/genome/{combined_species_names}.fna"
+        os.path.join(GENOMES_DIR,"{combined_species_names}.fna")
     output: 
-        multiext("data/genome/{combined_species_names}", 
-            ".1.bt2", ".2.bt2", ".3.bt2", ".4.bt2", ".rev.1.bt2", ".rev.2.bt2")
+        multiext("data/genome/{combined_species_names}", ".1.bt2", ".2.bt2", ".3.bt2", ".4.bt2", ".rev.1.bt2", ".rev.2.bt2")
     conda:
-        "../envs/map-reads.yml"
+        "../envs/bowtie2.yml"
     log:
         out = "log/create_bowtie2_index_{combined_species_names}.out",
         err = "log/create_bowtie2_index_{combined_species_names}.err"
     threads: 10
     shell:
         """
-        bowtie2-build --threads {threads} {input} data/genome/{wildcards.combined_species_names} 2> {log.err} 1> {log.out}
+        bowtie2-build --threads {threads} {input} $(dirname {input}) 2> {log.err} 1> {log.out}
         """
 
 rule align_reads:
     input:
-        f1 = "processed_data/fastq/{sample}_R1_processed.fastq.gz",
-        f2 = "processed_data/fastq/{sample}_R2_processed.fastq.gz",
-        bowtie_index = multiext(f"data/genome/{'_'.join(x for x in SPECIES + SPIKEIN_SPECIES)}", 
-            ".1.bt2", ".2.bt2", ".3.bt2", ".4.bt2", ".rev.1.bt2", ".rev.2.bt2")
+        f1 = os.path.join(TRIMMED_DIR, "{sample}_1_val_1_umi.fq.gz"),
+        f2 = os.path.join(TRIMMED_DIR, "{sample}_2_val_2_umi.fq.gz"),
+        bowtie_index = lambda wildcards: multiext(f"data/genome/{"_".join(sample_table[sample_table["sample_name"] == wildcards.sample]["genome_names"].iloc[0].split(", "))}", ".1.bt2", ".2.bt2", ".3.bt2", ".4.bt2", ".rev.1.bt2", ".rev.2.bt2")
     output:
-        sam = temp("results/aligned_reads/{sample}.sam"),
-        metrics = "results/QC/alignment_reports/{sample}.txt"
+        sam = temp(os.path.join(ALIGNMENT_DIR,"{sample}.sam")),
+        metrics = os.path.join(QC_DIR_ALIGNMENT, "{sample}.txt")
     log:
         out = "log/align_reads_{sample}.out",
         err = "log/align_reads_{sample}.err"
     conda:
-        "../envs/map-reads.yml"
+        "../envs/bowtie2.yml"
     threads: 10
     params:
-        BOWTIE2_INDEX = f"data/genome/{'_'.join(x for x in SPECIES + SPIKEIN_SPECIES)}",
+        BOWTIE_INDEX = lambda wildcards: os.path.join("data/genome/", "_".join(sample_table[sample_table['sample_name'] == wildcards.sample]['genome_names'].iloc[0].split(', '))),
         UMI_SIZE = config['bowtie2']['umi_size'],
         PAIRED = config['bowtie2']['paired_options'],
         ADDITIONAL = config['bowtie2']['additional_params']
     shell:
         """
-        bowtie2 -x {params.BOWTIE2_INDEX} --threads {threads} --trim5 {params.UMI_SIZE} --trim3 {params.UMI_SIZE} {params.PAIRED} {params.ADDITIONAL} --met-file {output.metrics} -1 {input.f1} -2 {input.f2} -S {output.sam} 2> {log.err} 1> {log.out}
+        bowtie2 -x {params.BOWTIE_INDEX} --threads {threads} --trim5 {params.UMI_SIZE} --trim3 {params.UMI_SIZE} {params.PAIRED} {params.ADDITIONAL} --met-file {output.metrics} -1 {input.f1} -2 {input.f2} -S {output.sam} 2> {log.err} 1> {log.out}
         """
 
 rule sam_to_bam:
     input:
-        "results/aligned_reads/{sample}.sam"
+        os.path.join(ALIGNMENT_DIR,"{sample}.sam")
     output:
-        temp("results/aligned_reads/{sample}_allgenomes.bam")
+        temp(os.path.join(ALIGNMENT_DIR, "{sample}_allgenomes.bam"))
     conda:
-        "../envs/map-reads.yml"
+        "../envs/samtools.yml"
     threads: 10
     log:
         out = "log/sam_to_bam.{sample}.out",
@@ -54,30 +52,13 @@ rule sam_to_bam:
     shell:
         "samtools view --threads {threads} -u {input} | samtools sort --threads 8 -o {output}"
 
-rule sort_bam:
-    # Sorts a mapped bam file in preparation for indexing.
-    input:
-        "results/aligned_reads/{sample}_allgenomes.bam"
-    output:
-        "results/aligned_reads/{sample}_allgenomes_sorted.bam"
-    conda:
-        "../envs/map-reads.yml"
-    threads: 10
-    log:
-        out = "log/sort_bam.{sample}_allgenomes.out",
-        err = "log/sort_bam.{sample}_allgenomes.err"
-    shell:
-        """
-        samtools sort -@ {threads} {input} -o {output}
-        """
-
 rule index_bam:
     input:
-        "results/aligned_reads/{sample}_{genome}.bam"
+        os.path.join(ALIGNMENT_DIR, "{sample}_{genome}.bam")
     output:
-        "results/aligned_reads/{sample}_{genome}.bam.bai"
+        os.path.join(ALIGNMENT_DIR, "{sample}_{genome}.bam.bai")
     conda:
-        "../envs/map-reads.yml"
+        "../envs/samtools.yml"
     threads: 10
     log:
         out = "log/index_bam.{sample}_{genome}.out",
@@ -85,21 +66,55 @@ rule index_bam:
     shell:
        "samtools index {input} 2> {log.err} 1> {log.out}"
 
+rule deduplicate_bam:
+    input:
+        os.path.join(ALIGNMENT_DIR, "{sample}_allgenomes.bam"),
+        os.path.join(ALIGNMENT_DIR, "{sample}_allgenomes.bam.bai")
+    output:
+        os.path.join(ALIGNMENT_DIR, "{sample}_allgenomes.dedup.bam")
+    conda:
+        "../envs/umitools.yml"
+    threads: 10
+    log:
+        out = "log/deduplicate_bam.{sample}.out",
+        err = "log/deduplicate_bam.{sample}.err"
+    params:
+        QC_DIR = os.path.join(QC_DIR, "dedup")
+    shell:
+        """      
+        mkdir -p {params.QC_DIR}  
+        umi_tools dedup -I {input} --output-stats={params.QC_DIR}/{wildcards.sample} --paired -S {output} 2> {log.err} 1> {log.out}
+        """
+
+#rule index_dedup_bam:
+#   input:
+#       os.path.join(ALIGNMENT_DIR, "{sample}_{genome}.dedup.bam")
+#   output:
+#       os.path.join(ALIGNMENT_DIR, "{sample}_{genome}.dedup.bam.bai")
+#   conda:
+#       "../envs/samtools.yml"
+#   threads: 10
+#   log:
+#       out = "log/index_dedup_bam.{sample}_{genome}.out",
+#       err = "log/index_dedup_bam.{sample}_{genome}.err"
+#   shell:
+#      "samtools index {input} 2> {log.err} 1> {log.out}"
+
 rule extract_genome_bam:
     input:
-        bam = "results/aligned_reads/{sample}_allgenomes_sorted.bam",
-        bai = "results/aligned_reads/{sample}_allgenomes_sorted.bam.bai",
+        bam = os.path.join(ALIGNMENT_DIR,"{sample}_allgenomes.dedup.bam"),
+        bai = os.path.join(ALIGNMENT_DIR,"{sample}_allgenomes.dedup.bam.bai"),
         chrom_sizes_file = lambda wc: "data/genome/{species}/" + GENOMES[wc.species] + ".chrom.sizes"
     output:
-        "results/aligned_reads/{sample}_{species}_extract.bam"
+        os.path.join(ALIGNMENT_DIR, "{sample}_{species}.bam")
     conda:
-        "../envs/map-reads.yml"
+        "../envs/samtools.yml"
     threads: 10
     log:
         out = "log/extract_{species}_bam.{sample}.out",
         err = "log/extract_{species}_bam.{sample}.err"
     wildcard_constraints:
-        genome = '|'.join(GENOMES.keys())
+        species = '|'.join(GENOMES.keys())
     params:   
         pattern_match = lambda wc, input: '|'.join(x for x in list(pd.read_table(input.chrom_sizes_file, delimiter="\t", header=None).iloc[:,0]))
     shell:
