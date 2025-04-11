@@ -1,0 +1,180 @@
+---
+title: "20250407-quantify_and_cluster_tsrs"
+format: html
+editor: visual
+---
+
+```{r}
+library(rtracklayer)
+library(tidyverse)
+
+# Load tsrs
+sample_names <- c("mock", "4hpi", "12hpi", "24hpi", "48hpi", "72hpi")
+tsr_files <- paste0("results/tsrs/",sample_names, ".bed")
+tsrs <- lapply(tsr_files, import.bed)
+tsrs <- GRangesList(tsrs)
+names(tsrs) <- sample_names
+
+# Combine peaks into a single GRanges
+tsrs_combined <- unlist(tsrs)
+tsrs_combined$sample <- factor(tsrs_combined@ranges@NAMES, levels = sample_names)
+tsrs_combined$id <- seq(length(tsrs_combined))
+mcols(tsrs_combined) <- mcols(tsrs_combined) |> 
+  data.frame() |> 
+  pivot_wider(id_cols = id, names_from = sample, values_from = score) |> 
+  select(all_of(sample_names))
+
+# consolidate peaks within 30 bp of each other as the same peak, this allows 
+# peaks accross timepoints that are slighlty shifted considered the "same" TSS
+tsrs_combined2 <- GenomicRanges::reduce(tsrs_combined, min.gapwidth = 30, with.revmap = T)
+
+revmap <- mcols(tsrs_combined2)$revmap
+mcols(tsrs_combined2) <- relist(tsrs_combined[unlist(revmap)], revmap) |> 
+  map(~mcols(.x) |> data.frame() |> summarise_all(sum, na.rm=T)) |> 
+  bind_rows() |> 
+  select(mock, 
+         `4hpi` = "X4hpi", 
+         `12hpi` = "X12hpi",
+         `24hpi` = "X24hpi", 
+         `48hpi` = "X48hpi",
+         `72hpi` = "X72hpi")
+
+tsrs_combined2
+```
+
+#### Subtract values from mock infected
+
+```{r}
+tsrs_combined3 <- tsrs_combined2
+mcols(tsrs_combined3) <- mcols(tsrs_combined3) |> 
+  apply(2, function(.x) .x - tsrs_combined3$mock) |> 
+  apply(2, function(.x) replace(.x,.x < 0 , 0))
+
+# Remove mock
+mcols(tsrs_combined3) <- mcols(tsrs_combined3)[-1]
+```
+
+#### Remove outliers
+
+The CMV RNA 4.9 gene is known to have high-level of transcription across all time points, vastly out-numbering RNA produced by other loci. For instance, in our current dataset the TSR associated with RNA4.9 has a score of 966617, while the 99th percentile for score at the same timepoint is 8261 and the median score 125. This is an outlier that will disrupt comparison.
+
+The TSS of RNA 4.9 is located at position 94,733 on the +strand. There is also a highly active TSS associated with RNA 4.9 located at 94766 on the -strand.
+
+```{r}
+#| warning: false
+#| error: false 
+
+tsrs_combined3 <- tsrs_combined3[!(
+  tsrs_combined3@ranges@start == 94733 & 
+  tsrs_combined3@strand == "+")]
+
+tsrs_combined3 <- tsrs_combined3[!(
+  tsrs_combined3@ranges@start == 94766 & 
+  tsrs_combined3@strand == "-")]
+```
+
+#### Normalize scores
+
+```{r}
+tsr_scores <- mcols(tsrs_combined3) |> data.frame() |> tibble()
+names(tsr_scores) <- sub("^X", "", names(tsr_scores))
+tsr_scores.normalized <- tsr_scores |> mutate_all(~100*.x/sum(.x))
+```
+
+#### Get Genomic Features
+
+```{r}
+cmv_features <- rtracklayer::readGFF("data/KF297339.1.gff3")
+cmv_features2 <- cmv_features |> data.frame() 
+txdb <- txdbmaker::makeTxDbFromGFF("data/KF297339.1.gff3", format = "gff3")
+cmv_promoters <- GenomicFeatures::promoters(txdb)
+
+IE.genes <- cmv_features2 |> 
+  filter(grepl("IE[12]", product)) |> 
+  pull(gene) |> 
+  unique()
+
+LTF.genes <- c("UL79", "UL87", "UL95")
+```
+
+```{r}
+
+tsrs_combined4 <- tsrs_combined3
+tsrs_combined4$nearest_promoter <- cmv_promoters$tx_name[nearest(tsrs_combined4,cmv_promoters)]
+tsrs_combined4$distance_to_promoter <- elementMetadata(distanceToNearest(tsrs_combined4, cmv_promoters))[["distance"]]
+
+tsr_scores <- mcols(tsrs_combined4) |> data.frame() |> tibble()
+
+tsr_scores <- tsr_scores %>% mutate(gene_category = 
+  case_when(
+    nearest_promoter %in% IE.genes & distance_to_promoter < 1000 ~ "Immediate Early",
+    nearest_promoter %in% LTF.genes & distance_to_promoter < 1000 ~ "Late",
+    .default = "other"
+  )
+)
+
+names(tsr_scores) <- sub("^X", "", names(tsr_scores))
+```
+
+#### Cluster TSR scores
+
+```{r}
+x <- tsr_scores |> mutate(tsr = as.character(row_number()))
+x <- x |> pivot_longer(1:5, 
+                       names_to = "time",
+                       values_to = "score")
+x$time <- factor(x$time, levels = sample_names[-1])
+
+library(widyr)
+y <- widely_kmeans(x, tsr, time, score, k = 4)
+z <- left_join(x, y, by = "tsr")
+
+ggplot(z) + 
+  geom_line(aes(time,score, group=tsr)) +
+  facet_grid(gene_category~cluster) + 
+  scale_y_log10()
+```
+
+#### Cluster TSR scores (normalized)
+
+```{r}
+
+bed_files <- list.files("results/bed/", full.names = T)
+bed.list <- map(bed_files, import.bed)
+mapped_transcripts <- map_int(bed.list,length)[2:6]
+
+
+tsr_scores.normalized <- tsr_scores 
+for(i in seq_along(mapped_transcripts)) {
+  tsr_scores.normalized[[i]] <- tsr_scores.normalized[[i]]/mapped_transcripts[i]
+}
+
+x.normalized <- tsr_scores.normalized |> mutate(tsr = as.character(row_number()))
+x.normalized <- x.normalized |> pivot_longer(1:5, 
+                       names_to = "time",
+                       values_to = "score")
+x.normalized$time <- factor(x.normalized$time, levels = sample_names[-1])
+
+##########
+# Filter out RNA 2.9
+##########
+
+x.norm
+
+library(widyr)
+y.normalized <- widely_kmeans(x.normalized, tsr, time, score, k = 10)
+z.normalized <- left_join(x.normalized, y.normalized , by = "tsr")
+
+ggplot(z.normalized) + 
+  geom_line(aes(time,log2(score + 1e-9), group=tsr)) +
+  facet_grid(gene_category~cluster)
+```
+
+```{r}
+library(ggalign)
+ggheatmap(tsr_scores.normalized[1:5]) +
+  scale_fill_gradientn(colours = terrain.colors(5)) +
+  anno_left() +
+  align_dendro(k = 5)
+```
+
