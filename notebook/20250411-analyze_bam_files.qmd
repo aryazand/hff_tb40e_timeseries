@@ -1,0 +1,17 @@
+---
+title: "20250411-analyze_bam_files"
+format: html
+editor: visual
+---
+
+Here we will analyze the bam files
+
+```{r}
+library(Rsamtools)
+library(tidyverse)
+library(GenomicAlignments)
+
+bam_file <- BamFile("results/alignments/4_hpi_flavo_pro-seq_cmv_tb40e.bam")
+aligned_pairs <- readGAlignmentPairs(bam_file)
+reads <- scanBam(bam_file)
+```
