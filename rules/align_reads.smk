@@ -16,26 +16,30 @@ rule create_bowtie2_index:
 
 rule align_reads:
     input:
-        f1 = os.path.join(TRIMMED_DIR, "{sample}_1_val_1_umi.fq.gz"),
-        f2 = os.path.join(TRIMMED_DIR, "{sample}_2_val_2_umi.fq.gz"),
+        f1 = os.path.join(TRIMMED_DIR, "{sample}_1_trimmed_umi.fastq.gz"),
+        f2 = os.path.join(TRIMMED_DIR, "{sample}_2_trimmed_umi.fastq.gz"),
         bowtie_index = lambda wildcards: multiext(f"data/genome/{"_".join(sample_table[sample_table["sample_name"] == wildcards.sample]["genome_names"].iloc[0].split(", "))}", ".1.bt2", ".2.bt2", ".3.bt2", ".4.bt2", ".rev.1.bt2", ".rev.2.bt2")
     output:
         sam = temp(os.path.join(ALIGNMENT_DIR,"{sample}.sam")),
-        metrics = os.path.join(QC_DIR_ALIGNMENT, "{sample}.txt")
+        metrics = os.path.join(QC_DIR_ALIGNMENT, "{sample}.txt"),
+        stats = os.path.join(QC_DIR_ALIGNMENT, "{sample}.stats")
     log:
         out = "log/align_reads_{sample}.out",
-        err = "log/align_reads_{sample}.err"
     conda:
         "../envs/bowtie2.yml"
-    threads: 10
+    threads: 15
     params:
         BOWTIE_INDEX = lambda wildcards: os.path.join("data/genome/", "_".join(sample_table[sample_table['sample_name'] == wildcards.sample]['genome_names'].iloc[0].split(', '))),
-        UMI_SIZE = config['bowtie2']['umi_size'],
-        PAIRED = config['bowtie2']['paired_options'],
-        ADDITIONAL = config['bowtie2']['additional_params']
+        PAIRED = "--fr --no-discordant",
+        ADDITIONAL = ""
     shell:
         """
-        bowtie2 -x {params.BOWTIE_INDEX} --threads {threads} --trim5 {params.UMI_SIZE} --trim3 {params.UMI_SIZE} {params.PAIRED} {params.ADDITIONAL} --met-file {output.metrics} -1 {input.f1} -2 {input.f2} -S {output.sam} 2> {log.err} 1> {log.out}
+        bowtie2 -x {params.BOWTIE_INDEX} \
+            --threads {threads} \
+            {params.PAIRED} {params.ADDITIONAL} \
+            --met-file {output.metrics} \
+            -1 {input.f1} -2 {input.f2} \
+            -S {output.sam} 2> {output.stats} 1> {log.out}
         """
 
 rule sam_to_bam:
