@@ -2,42 +2,42 @@
 ### Directories ###
 ###################
 
-results: "results"
+data_dir: "data" # Directory containing input files
+results_dir: "results" # Direct for output files
 
-####################################################
-### Config for aligning fastq files with Bowtie2 ###
-####################################################
+#######################
+### Sample Metadata ###
+#######################
+
+pep_file: "data/sample_metadata/PEP.yaml"
+
+# There are two types of filters
+# 1. sample_contains: filter samples by regex on a column
+# 2. sample_equals: a single string or list of strings to filter samples by exact match on a column
+filters:
+  sample_contains:
+    sample_name: "flavo"
+  
+######################################
+### Individual Tools Configuration ###
+######################################
+
+trim_galore:
+  threads: 5
+  adaptor: "--small_rna"
+  stringency: 3
+
+umi_tools:
+  bc_pattern: "NNNN"
+
+bowtie2_build: 
+  threads: 10
 
 bowtie2:
-  umi_size: 8 # size of umi to trim from reads prior to align
-  paired_options: "--fr --no-discordant" # options for paired end alignment
+  umi_size: 0 # size of umi to trim from reads prior to align
+  paired_params: "--fr --no-discordant" # options for paired end alignment
   additional_params: ""  # additional bowtie2 parameters 
+  threads: 15
 
-###########################################################
-### Config for creating bed, bedgraph, and bigwig files ###
-###########################################################
-
-# TODO: configuration for normal
-
-genomes_to_extact: 
-  - cmv 
-  - human
-
-create_track:
-  track_type: "bw" # choose bw for bigwig or bg for bedgraph
-  binsize: 1 # size of bedgraph bins
-  bedgraph_definition_line: "track type=bedGraph"
-
-##########################################
-### Config for creating UCSC track hub ###
-##########################################
-
-ucsc:
-    project_name: myData
-    email: arya-zandvakili@uiowa.edu 
-
-####################################################
-### Sample data configuration for testing script ###
-####################################################
-
-fastq_sample:
+samtools:
+  threads: 10
