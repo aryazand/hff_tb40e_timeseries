@@ -7,10 +7,10 @@ configfile: "config.yml"
 
 module proseq_align:
     snakefile: 
-        github("aryazand/proseq_align", branch = "main")
+        github("aryazand/align_proseq", path = "snakefile", branch = "main")
     config: config
 
-use rule * from proseq_align exclude sra_to_fastq, gzip_fastq as proseq_align_* 
+use rule * from proseq_align as proseq_align_* 
 
 ######################
 # Define Rules
