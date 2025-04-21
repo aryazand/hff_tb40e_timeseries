@@ -43,3 +43,6 @@ bowtie2:
 
 samtools:
   threads: 10
+
+umi_tools_dedup:
+  additional: ""
