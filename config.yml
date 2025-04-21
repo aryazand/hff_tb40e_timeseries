@@ -37,8 +37,8 @@ bowtie2_build:
 
 bowtie2:
   umi_size: 0 # size of umi to trim from reads prior to align
-  paired_params: "--fr --no-discordant" # options for paired end alignment
-  additional_params: ""  # additional bowtie2 parameters 
+  paired_params: "--fr --no-discordant --dovetail" # options for paired end alignment
+  additional_params: "--very-sensitive"  # additional bowtie2 parameters 
   threads: 15
 
 samtools:
