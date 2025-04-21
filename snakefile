@@ -20,3 +20,7 @@ rule all:
     input:
         rules.proseq_align_all.input
     default_target: True
+
+rule multiqc:
+    input:
+        rules.proseq_align_multiqc.input
