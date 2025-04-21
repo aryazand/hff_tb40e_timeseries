@@ -26,9 +26,11 @@ trim_galore:
   threads: 5
   adaptor: "--small_rna"
   stringency: 3
+  additional: "--three_prime_clip_R1 8 --three_prime_clip_R2 8"
 
-umi_tools:
-  bc_pattern: "NNNN"
+umi_tools_extract:
+  bc_pattern: "NNNNNNNN"
+  additional: ""
 
 bowtie2_build: 
   threads: 10
