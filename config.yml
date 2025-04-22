@@ -46,3 +46,24 @@ samtools:
 
 umi_tools_dedup:
   additional: ""
+
+######################################
+###  UCSC hub creation parameters  ###
+######################################
+
+bam_dir: "results/alignments" # Directory containing bam files
+bigwig_dir: "results/bw"
+
+create_track:
+  threads: 10
+  binsize: 1
+
+create_ucschub:
+  trackhub_dir: "results/UCSCGenomeBrowser"
+  email: "arya-zandvakili@uiowa.edu"
+  genomes:
+    cmv_tb40e:
+      genome_name: "KF297339.1"
+      shortlabel: "CMV TB40E" 
+      longlabel: "Annotated CDS for HCMV strain TB40-E (KF297339.1)"
+      ucsc-defaultPos: "KF297339.1:1-237683"

@@ -12,13 +12,20 @@ module proseq_align:
 
 use rule * from proseq_align as proseq_align_* 
 
+module bam_to_ucschub:
+    snakefile: "../bam_to_ucschub/snakefile"
+    config: config
+
+use rule * from bam_to_ucschub as bam_to_ucschub_* 
+
 ######################
 # Define Rules
 #####################
 
 rule all:
     input:
-        rules.proseq_align_all.input
+        rules.proseq_align_all.input,
+        rules.bam_to_ucschub_all.input
     default_target: True
 
 rule multiqc:

@@ -1,0 +1,5 @@
+hub cmv_tb40e
+shortLabel CMV TB40E
+longLabel Annotated CDS for HCMV strain TB40-E (KF297339.1)
+genomesFile genomes.txt
+email arya-zandvakili@uiowa.edu

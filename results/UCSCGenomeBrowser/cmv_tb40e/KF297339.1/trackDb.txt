@@ -1,0 +1,219 @@
+track KF297339.1
+type bigGenePred
+group map
+priority 1
+bigDataUrl KF297339.1.bb
+longLabel Annotated CDS for HCMV strain TB40-E (KF297339.1)
+shortLabel CMV TB40E
+visibility pack
+
+##############################################
+
+track mock_flavo_pro-seq
+container multiWig
+type bigWig
+aggregate transparentOverlay
+showSubtrackColorOnUi on
+shortLabel mock_flavo_pro-seq
+longLabel mock_flavo_pro-seq
+visibility full
+autoScale group
+maxHeightPixels 100:50:8
+type bigWig
+priority 2
+
+	track mock_flavo_pro-seq_for
+	parent mock_flavo_pro-seq
+	shortLabel mock_flavo_pro-seq_forwrad
+	longLabel mock_flavo_pro-seq_forward
+	bigDataUrl ../../../bw/mock_flavo_pro-seq_cmv_tb40e_for.bw
+	type bigWig
+	color 113,35,124
+	altColor 113,35,124
+	priority 2.1
+
+	track mock_flavo_pro-seq_rev
+	parent mock_flavo_pro-seq
+	shortLabel mock_flavo_pro-seq_reverse
+	longLabel mock_flavo_pro-seq_reverse
+	bigDataUrl ../../../bw/mock_flavo_pro-seq_cmv_tb40e_rev.bw
+	type bigWig
+	negateValues on
+	color 242,157,228
+	altColor 242,157,228
+	priority 2.2
+##############################################
+
+track 4_hpi_flavo_pro-seq
+container multiWig
+type bigWig
+aggregate transparentOverlay
+showSubtrackColorOnUi on
+shortLabel 4_hpi_flavo_pro-seq
+longLabel 4_hpi_flavo_pro-seq
+visibility full
+autoScale group
+maxHeightPixels 100:50:8
+type bigWig
+priority 2
+
+	track 4_hpi_flavo_pro-seq_for
+	parent 4_hpi_flavo_pro-seq
+	shortLabel 4_hpi_flavo_pro-seq_forwrad
+	longLabel 4_hpi_flavo_pro-seq_forward
+	bigDataUrl ../../../bw/4_hpi_flavo_pro-seq_cmv_tb40e_for.bw
+	type bigWig
+	color 113,35,124
+	altColor 113,35,124
+	priority 2.1
+
+	track 4_hpi_flavo_pro-seq_rev
+	parent 4_hpi_flavo_pro-seq
+	shortLabel 4_hpi_flavo_pro-seq_reverse
+	longLabel 4_hpi_flavo_pro-seq_reverse
+	bigDataUrl ../../../bw/4_hpi_flavo_pro-seq_cmv_tb40e_rev.bw
+	type bigWig
+	negateValues on
+	color 242,157,228
+	altColor 242,157,228
+	priority 2.2
+##############################################
+
+track 12_hpi_flavo_pro-seq
+container multiWig
+type bigWig
+aggregate transparentOverlay
+showSubtrackColorOnUi on
+shortLabel 12_hpi_flavo_pro-seq
+longLabel 12_hpi_flavo_pro-seq
+visibility full
+autoScale group
+maxHeightPixels 100:50:8
+type bigWig
+priority 2
+
+	track 12_hpi_flavo_pro-seq_for
+	parent 12_hpi_flavo_pro-seq
+	shortLabel 12_hpi_flavo_pro-seq_forwrad
+	longLabel 12_hpi_flavo_pro-seq_forward
+	bigDataUrl ../../../bw/12_hpi_flavo_pro-seq_cmv_tb40e_for.bw
+	type bigWig
+	color 113,35,124
+	altColor 113,35,124
+	priority 2.1
+
+	track 12_hpi_flavo_pro-seq_rev
+	parent 12_hpi_flavo_pro-seq
+	shortLabel 12_hpi_flavo_pro-seq_reverse
+	longLabel 12_hpi_flavo_pro-seq_reverse
+	bigDataUrl ../../../bw/12_hpi_flavo_pro-seq_cmv_tb40e_rev.bw
+	type bigWig
+	negateValues on
+	color 242,157,228
+	altColor 242,157,228
+	priority 2.2
+##############################################
+
+track 24_hpi_flavo_pro-seq
+container multiWig
+type bigWig
+aggregate transparentOverlay
+showSubtrackColorOnUi on
+shortLabel 24_hpi_flavo_pro-seq
+longLabel 24_hpi_flavo_pro-seq
+visibility full
+autoScale group
+maxHeightPixels 100:50:8
+type bigWig
+priority 2
+
+	track 24_hpi_flavo_pro-seq_for
+	parent 24_hpi_flavo_pro-seq
+	shortLabel 24_hpi_flavo_pro-seq_forwrad
+	longLabel 24_hpi_flavo_pro-seq_forward
+	bigDataUrl ../../../bw/24_hpi_flavo_pro-seq_cmv_tb40e_for.bw
+	type bigWig
+	color 113,35,124
+	altColor 113,35,124
+	priority 2.1
+
+	track 24_hpi_flavo_pro-seq_rev
+	parent 24_hpi_flavo_pro-seq
+	shortLabel 24_hpi_flavo_pro-seq_reverse
+	longLabel 24_hpi_flavo_pro-seq_reverse
+	bigDataUrl ../../../bw/24_hpi_flavo_pro-seq_cmv_tb40e_rev.bw
+	type bigWig
+	negateValues on
+	color 242,157,228
+	altColor 242,157,228
+	priority 2.2
+##############################################
+
+track 48_hpi_flavo_pro-seq
+container multiWig
+type bigWig
+aggregate transparentOverlay
+showSubtrackColorOnUi on
+shortLabel 48_hpi_flavo_pro-seq
+longLabel 48_hpi_flavo_pro-seq
+visibility full
+autoScale group
+maxHeightPixels 100:50:8
+type bigWig
+priority 2
+
+	track 48_hpi_flavo_pro-seq_for
+	parent 48_hpi_flavo_pro-seq
+	shortLabel 48_hpi_flavo_pro-seq_forwrad
+	longLabel 48_hpi_flavo_pro-seq_forward
+	bigDataUrl ../../../bw/48_hpi_flavo_pro-seq_cmv_tb40e_for.bw
+	type bigWig
+	color 113,35,124
+	altColor 113,35,124
+	priority 2.1
+
+	track 48_hpi_flavo_pro-seq_rev
+	parent 48_hpi_flavo_pro-seq
+	shortLabel 48_hpi_flavo_pro-seq_reverse
+	longLabel 48_hpi_flavo_pro-seq_reverse
+	bigDataUrl ../../../bw/48_hpi_flavo_pro-seq_cmv_tb40e_rev.bw
+	type bigWig
+	negateValues on
+	color 242,157,228
+	altColor 242,157,228
+	priority 2.2
+##############################################
+
+track 72_hpi_flavo_pro-seq
+container multiWig
+type bigWig
+aggregate transparentOverlay
+showSubtrackColorOnUi on
+shortLabel 72_hpi_flavo_pro-seq
+longLabel 72_hpi_flavo_pro-seq
+visibility full
+autoScale group
+maxHeightPixels 100:50:8
+type bigWig
+priority 2
+
+	track 72_hpi_flavo_pro-seq_for
+	parent 72_hpi_flavo_pro-seq
+	shortLabel 72_hpi_flavo_pro-seq_forwrad
+	longLabel 72_hpi_flavo_pro-seq_forward
+	bigDataUrl ../../../bw/72_hpi_flavo_pro-seq_cmv_tb40e_for.bw
+	type bigWig
+	color 113,35,124
+	altColor 113,35,124
+	priority 2.1
+
+	track 72_hpi_flavo_pro-seq_rev
+	parent 72_hpi_flavo_pro-seq
+	shortLabel 72_hpi_flavo_pro-seq_reverse
+	longLabel 72_hpi_flavo_pro-seq_reverse
+	bigDataUrl ../../../bw/72_hpi_flavo_pro-seq_cmv_tb40e_rev.bw
+	type bigWig
+	negateValues on
+	color 242,157,228
+	altColor 242,157,228
+	priority 2.2
